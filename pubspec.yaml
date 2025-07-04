@@ -1,0 +1,35 @@
+name: autoledger
+description: AutoLedger frontend app to manage small business finance.
+version: 1.0.0+1
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^0.13.6
+  provider: ^6.0.5
+  flutter_secure_storage: ^8.0.0
+  speech_to_text: ^6.3.0
+  flutter_tts: ^3.6.3
+  file_picker: ^6.1.1
+  image_picker: ^1.0.7
+  path_provider: ^2.1.2
+  path: ^1.8.3
+  pdf: ^3.10.1
+  printing: ^5.11.0
+  shared_preferences: ^2.2.2
+  open_filex: ^4.3.2
+  intl: ^0.18.1
+  dio: ^5.4.1
+  shimmer: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo/autoledger_logo.png
