@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/email_template_model.dart';
-import '../utils/storage.dart';
+import '../utils/secure_storage.dart';
 
 class EmailTemplateService {
   static const String baseUrl = 'https://your-api-url.com/api/email-templates';

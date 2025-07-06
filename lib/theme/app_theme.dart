@@ -9,6 +9,23 @@ class AppTheme {
   static const Color textSecondary = Color(0xFF457B9D); // Muted blue
   static const Color borderColor = Color(0xFFCED4DA); // Soft gray border
 
+  static const TextStyle headerStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: textPrimary,
+  );
+
+  static const TextStyle subHeaderStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: textPrimary,
+  );
+
+  static const TextStyle bodyStyle = TextStyle(
+    fontSize: 14,
+    color: textSecondary,
+  );
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

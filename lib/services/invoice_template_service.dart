@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/invoice_template_model.dart';
-import '../utils/storage.dart';
+import '../utils/secure_storage.dart';
 
 class InvoiceTemplateService {
   static const String baseUrl = 'https://your-api-url.com/api/invoice-templates';

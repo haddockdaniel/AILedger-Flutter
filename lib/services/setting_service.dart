@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/user_tax_settings_model.dart';
-import '../utils/storage.dart';
+import '../utils/secure_storage.dart';
 
 class SettingsService {
   final String baseUrl;
@@ -9,7 +9,7 @@ class SettingsService {
   SettingsService({required this.baseUrl});
 
   Future<UserTaxSettings?> fetchUserTaxSettings() async {
-    final token = await Storage.getToken();
+    final token = await SecureStorage.getToken();
     final response = await http.get(
       Uri.parse('$baseUrl/api/settings/tax'),
       headers: {
@@ -26,7 +26,7 @@ class SettingsService {
   }
 
   Future<bool> updateUserTaxSettings(UserTaxSettings settings) async {
-    final token = await Storage.getToken();
+    final token = await SecureStorage.getToken();
     final response = await http.put(
       Uri.parse('$baseUrl/api/settings/tax'),
       headers: {

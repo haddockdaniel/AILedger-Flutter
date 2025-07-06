@@ -86,10 +86,10 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: Text('Invoices'),
-        backgroundColor: AppTheme.primary,
+        backgroundColor: AppTheme.primaryColor,
         actions: [
           IconButton(
             icon: Icon(Icons.picture_as_pdf),
@@ -104,7 +104,7 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.accent,
+        backgroundColor: AppTheme.accentColor,
         onPressed: triggerAddInvoice,
         child: Icon(Icons.add),
         tooltip: "Create Invoice",

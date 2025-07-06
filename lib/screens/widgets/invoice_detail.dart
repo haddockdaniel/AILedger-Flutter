@@ -3,7 +3,7 @@ import 'package:autoledger/models/invoice_model.dart';
 import 'package:autoledger/models/customer_model.dart';
 import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/services/customer_service.dart';
-import 'package:autoledger/utils/app_theme.dart';
+import 'package:autoledger/theme/app_theme.dart';
 
 class InvoiceDetail extends StatefulWidget {
   final int invoiceId;

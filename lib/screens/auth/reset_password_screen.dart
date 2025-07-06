@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../utils/app_theme.dart';
-import '../../utils/snackbar_helper.dart';
+import 'package:autoledger/theme/app_theme.dart';
+import '../widgets/error_snackbar.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final email = emailController.text.trim();
 
     if (email.isEmpty || !email.contains('@')) {
-      showSnackBar(context, 'Enter a valid email address');
+      ErrorSnackbar.show(context, 'Enter a valid email address');
       return;
     }
 
@@ -37,13 +37,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        showSnackBar(context, 'Password reset link sent to your email.');
+          ErrorSnackbar.show(context, 'Password reset link sent to your email.');
         Navigator.pop(context);
       } else {
-        showSnackBar(context, data['message'] ?? 'Failed to send reset link.');
+   ErrorSnackbar.show(context, data['message'] ?? 'Failed to send reset link.');
       }
     } catch (e) {
-      showSnackBar(context, 'Error: $e');
+      ErrorSnackbar.show(context, 'Error: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -54,9 +54,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppTheme.primary,
+        backgroundColor: AppTheme.primaryColor,
         title: const Text('Reset Password'),
       ),
       body: Padding(
@@ -81,7 +81,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ElevatedButton(
               onPressed: isLoading ? null : sendResetLink,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primary,
+                backgroundColor: AppTheme.primaryColor,
               ),
               child: isLoading
                   ? const SizedBox(

@@ -32,4 +32,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/logo/autoledger_logo.png
+    - lib/assets/images/logo.png
+    - lib/assets/illustrations/empty_contacts.png

@@ -10,7 +10,7 @@ class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key, this.onNavigate});
 
   void _logout(BuildContext context) async {
-    await SecureStorage.clearToken();
+    await SecureStorage.clearAll();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
     );

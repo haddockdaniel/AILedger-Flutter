@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:autoledger/services/ai_insight_service.dart';
-import 'package:autoledger/utils/app_theme.dart';
+import 'package:autoledger/theme/app_theme.dart';
 
 class AIInsightsWidget extends StatefulWidget {
   const AIInsightsWidget({Key? key}) : super(key: key);

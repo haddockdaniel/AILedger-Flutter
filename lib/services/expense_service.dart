@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import '../models/expense_model.dart';
-import '../utils/storage.dart';
+import '../utils/secure_storage.dart';
 
 class ExpenseService {
   static const String baseUrl = 'https://your-api-url.com/api/expenses';
 
   static Future<String?> _getToken() async {
-    return await Storage.getToken();
+    return await SecureStorage.getToken();
   }
 
   static Future<List<Expense>> getExpenses({String? vendor, DateTime? startDate, DateTime? endDate}) async {

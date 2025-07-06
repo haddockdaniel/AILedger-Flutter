@@ -10,12 +10,12 @@ import 'package:autoledger/screens/widgets/emails_widget.dart';
 import 'package:autoledger/screens/widgets/expenses_widget.dart';
 import 'package:autoledger/screens/widgets/reports_widget.dart';
 import 'package:autoledger/screens/widgets/ai_insights_widget.dart';
-import 'package:autoledger/screens/widgets/payment_settings_screen.dart';
+import 'package:autoledger/screens/settings/payment_settings_screen.dart';
 import 'package:autoledger/screens/widgets/invoice_detail.dart';
 import 'package:autoledger/screens/widgets/contact_detail_screen.dart';
-import 'package:autoledger/screens/widgets/signup_screen.dart';
-import 'package:autoledger/screens/widgets/subscription_screen.dart';
-import 'package:autoledger/screens/widgets/profile_screen.dart';
+import 'package:autoledger/screens/auth/signup_screen.dart';
+import 'package:autoledger/screens/auth/subscription_screen.dart';
+import 'package:autoledger/screens/profile_screen.dart';
 
 // New imports for voice overlay
 import 'package:autoledger/widgets/voice_slot_overlay.dart';
@@ -63,7 +63,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
       children: [
         MaterialApp(
           title: 'AutoLedger',
-          theme: AppTheme.light,
+          theme: AppTheme.lightTheme,
           initialRoute: '/login',
           routes: {
             '/login':          (_) => const LoginScreen(),

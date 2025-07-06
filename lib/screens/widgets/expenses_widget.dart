@@ -120,10 +120,10 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: Text("Expenses"),
-        backgroundColor: AppTheme.primary,
+        backgroundColor: AppTheme.primaryColor,
         actions: [
           IconButton(
             icon: Icon(Icons.mic),
@@ -133,7 +133,7 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.accent,
+        backgroundColor: AppTheme.accentColor,
         onPressed: addExpense,
         child: Icon(Icons.add),
         tooltip: "Add Expense",

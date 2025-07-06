@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:autoledger/utils/app_theme.dart';
-import 'package:autoledger/services/storage_service.dart';
-import 'package:autoledger/screens/widgets/voice_event_bus.dart';
+import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/utils/secure_storage.dart';
+import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/screens/widgets/voice_assistant.dart';
 import 'package:autoledger/screens/widgets/customers_widget.dart';
 import 'package:autoledger/screens/widgets/invoices_widget.dart';
@@ -85,7 +85,7 @@ return const ProfileScreen();
   }
 
   Future<void> _handleLogout() async {
-    await StorageService.clearTokens();
+    await SecureStorage.clearAll();
     if (mounted) {
       Navigator.pushReplacementNamed(context, '/');
     }
@@ -98,7 +98,7 @@ return const ProfileScreen();
         title,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppTheme.accentColor : AppTheme.textColor,
+          color: isSelected ? AppTheme.accentColor : AppTheme.textPrimary,
         ),
       ),
       selected: isSelected,

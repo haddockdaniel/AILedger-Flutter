@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:autoledger/models/user_tax_settings_model.dart';
-import 'package:autoledger/services/settings_service.dart';
-import 'package:autoledger/utils/storage.dart';
-import '../../theme/app_theme.dart';
+import 'package:autoledger/services/setting_service.dart';
+import 'package:autoledger/theme/app_theme.dart';
 
 class PaymentSettingsScreen extends StatefulWidget {
   const PaymentSettingsScreen({Key? key}) : super(key: key);

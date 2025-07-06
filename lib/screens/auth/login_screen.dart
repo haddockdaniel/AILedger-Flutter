@@ -1,10 +1,9 @@
-import 'package:autoledger/app_theme.dart';
-import 'package:autoledger/screens/dashboard_screen.dart';
-import 'package:autoledger/services/storage_service.dart';
+import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/screens/dashboard/dashboard_screen.dart';
+import 'package:autoledger/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,12 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
         final json = jsonDecode(response.body);
         final token = json['token'];
         final refreshToken = json['refreshToken'];
-        final user = json['user'];
-
-        final storage = Provider.of<StorageService>(context, listen: false);
-        await storage.saveAuthToken(token);
-        await storage.saveRefreshToken(refreshToken);
-        await storage.saveUserInfo(user);
+        await SecureStorage.saveToken(token);
+        await SecureStorage.saveRefreshToken(refreshToken);
 
         if (!mounted) return;
         Navigator.pushReplacement(
@@ -77,14 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundColor,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/app_logo.png', height: 100),
+ Image.asset('lib/assets/images/logo.png', height: 100),
               const SizedBox(height: 24),
               TextField(
                 controller: _emailController,
@@ -109,28 +104,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   : ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primary,
+                        backgroundColor: AppTheme.primaryColor,
                         minimumSize: const Size.fromHeight(48),
                       ),
                       child: const Text('Login'),
-const SizedBox(height: 12),          // spacing
-TextButton(                         // ← new
-  onPressed: () => Navigator.pushNamed(context, '/signup'),
-  child: const Text(
-    "Don't have an account? Sign Up",
-    style: TextStyle(decoration: TextDecoration.underline),
-  ),
-),
+              const SizedBox(height: 12),
                     ),
               TextButton(
-  onPressed: () {
-    Navigator.pushNamed(context, '/reset-password');
-  },
-  child: const Text(
-    'Forgot Password?',
-    style: TextStyle(color: Colors.white70),
-  ),
-),
+                onPressed: () => Navigator.pushNamed(context, '/signup'),
+                child: const Text(
+                  "Don't have an account? Sign Up",
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/reset-password');
+                },
+                child: const Text(
+                  'Forgot Password?',
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ),
             ],
           ),
         ),

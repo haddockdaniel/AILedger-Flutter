@@ -171,10 +171,10 @@ class _ReportsWidgetState extends State<ReportsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: Text("Reports"),
-        backgroundColor: AppTheme.primary,
+        backgroundColor: AppTheme.primaryColor,
         actions: [
           IconButton(
             icon: Icon(Icons.mic),

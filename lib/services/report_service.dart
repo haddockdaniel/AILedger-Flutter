@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../utils/storage.dart';
+import '../utils/secure_storage.dart';
 
 class ReportService {
   static const String baseUrl = 'https://your-api-url.com/api/reports';
 
   static Future<String?> _getToken() async {
-    return await Storage.getToken();
+    return await SecureStorage.getToken();
   }
 
   static Future<http.Response> getReport({
