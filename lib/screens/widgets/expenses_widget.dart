@@ -28,6 +28,7 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
       _searchController.text = query;
       applySearch(query);
     });
+	VoiceEventBus().on<VoiceEvent>().listen(_handleVoiceEvent);
   }
 
   Future<void> loadExpenses() async {
@@ -77,6 +78,19 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
   void deleteExpense(Expense expense) async {
     await ExpenseService.deleteExpense(expense.id);
     loadExpenses();
+  }
+
+  Future<void> _handleVoiceEvent(VoiceEvent evt) async {
+    if (evt.type != 'action') return;
+    switch (evt.payload) {
+      case 'expense.delete':
+        final id = evt.data['expenseId'];
+        if (id != null) {
+          await ExpenseService.deleteExpense(id.toString());
+          loadExpenses();
+        }
+        break;
+    }
   }
 
   Widget buildExpenseCard(Expense e) {

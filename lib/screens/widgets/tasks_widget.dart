@@ -30,6 +30,7 @@ class _TasksWidgetState extends State<TasksWidget> {
     super.initState();
     _loadTasks();
     VoiceEventBus().on<VoiceIntentEvent>().listen(_handleVoiceIntent);
+    VoiceEventBus().on<VoiceEvent>().listen(_handleVoiceEvent);
   }
 
   Future<void> _loadTasks() async {
@@ -155,6 +156,30 @@ class _TasksWidgetState extends State<TasksWidget> {
             }
           });
           await _loadTasks();
+        }
+        break;
+    }
+  }
+  
+    Future<void> _handleVoiceEvent(VoiceEvent evt) async {
+    if (evt.type != 'action') return;
+    switch (evt.payload) {
+      case 'task.complete':
+        final id = evt.data['taskId'];
+        if (id != null) {
+          await TaskService.markTaskComplete(id.toString());
+          SchedulerService.cancelTask(id.toString());
+          _loadTasks();
+        }
+        break;
+      case 'task.delete':
+        final id = evt.data['taskId'];
+        if (id != null) {
+          final match = _tasks.firstWhere(
+            (t) => t.taskId == id,
+            orElse: () => null,
+          );
+          if (match != null) _deleteTask(match);
         }
         break;
     }

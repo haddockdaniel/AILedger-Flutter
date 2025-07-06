@@ -30,6 +30,7 @@ class _EmailsWidgetState extends State<EmailsWidget> {
     super.initState();
     _loadData();
     VoiceEventBus().on<VoiceIntentEvent>().listen(_handleVoiceIntent);
+    VoiceEventBus().on<VoiceEvent>().listen(_handleVoiceEvent);
   }
 
   Future<void> _loadData() async {
@@ -107,6 +108,27 @@ class _EmailsWidgetState extends State<EmailsWidget> {
         final q = evt.slots?['query'] ?? '';
         _searchCtrl.text = q;
         _applySearch(q);
+        break;
+    }
+  }
+  
+    Future<void> _handleVoiceEvent(VoiceEvent evt) async {
+    if (evt.type != 'action') return;
+    switch (evt.payload) {
+      case 'email.send':
+        final id = evt.data['emailId'];
+        if (id != null) {
+          await EmailService.sendEmail(id.toString());
+          _loadData();
+        }
+        break;
+      case 'email.delete':
+        final id = evt.data['emailId'];
+        if (id != null) {
+          final match = _emails.firstWhere((e) => e.emailId == id,
+              orElse: () => null);
+          if (match != null) _deleteEmail(match);
+        }
         break;
     }
   }

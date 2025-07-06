@@ -30,6 +30,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     super.initState();
     _load();
     VoiceEventBus().on().listen(_handleVoiceIntent);
+	VoiceEventBus().on<VoiceEvent>().listen(_handleVoiceEvent);
   }
 
   Future<void> _load() async {
@@ -132,6 +133,19 @@ class _ContactsScreenState extends State<ContactsScreen> {
         break;
       case 'scan_card':
         _scanBusinessCard();
+        break;
+    }
+  }
+
+  Future<void> _handleVoiceEvent(VoiceEvent evt) async {
+    if (evt.type != 'action') return;
+    switch (evt.payload) {
+      case 'contact.delete':
+        final id = evt.data['contactId'];
+        if (id != null) {
+          await ContactService.deleteContact(id.toString());
+          _load();
+        }
         break;
     }
   }

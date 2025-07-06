@@ -25,6 +25,7 @@ class _CustomersWidgetState extends State<CustomersWidget> {
     super.initState();
     _loadCustomers();
     VoiceEventBus().on<VoiceCommandEvent>().listen(_handleVoiceCommand);
+    VoiceEventBus().on<VoiceEvent>().listen(_handleVoiceEvent);
   }
 
   void _loadCustomers() async {
@@ -67,6 +68,19 @@ class _CustomersWidgetState extends State<CustomersWidget> {
         final match = _customers.firstWhere((c) => c.customerId == id,
             orElse: () => Customer.empty());
         if (match.customerId.isNotEmpty) _openDetail(match);
+        break;
+    }
+  }
+  
+    Future<void> _handleVoiceEvent(VoiceEvent evt) async {
+    if (evt.type != 'action') return;
+    switch (evt.payload) {
+      case 'customer.delete':
+        final id = evt.data['customerId'];
+        if (id != null) {
+          await _customerService.deleteCustomer(id.toString());
+          _loadCustomers();
+        }
         break;
     }
   }

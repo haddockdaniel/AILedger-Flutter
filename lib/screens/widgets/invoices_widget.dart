@@ -41,7 +41,8 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
         );
       }
     });
-	    VoiceEventBus().on<VoiceIntentEvent>().listen(_handleVoiceIntent);
+    VoiceEventBus().on<VoiceIntentEvent>().listen(_handleVoiceIntent);
+    VoiceEventBus().on<VoiceEvent>().listen(_handleVoiceEvent);
   }
 
   Future<void> loadInvoices() async {
@@ -88,7 +89,7 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
     );
   }
   
-    Future<void> _handleVoiceIntent(VoiceIntentEvent evt) async {
+  Future<void> _handleVoiceIntent(VoiceIntentEvent evt) async {
     switch (evt.intent) {
       case 'send_invoice_reminder':
         final name = (evt.slots?['customer'] ?? evt.slots?['contact'])?.toString();
@@ -109,6 +110,25 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
               SnackBar(content: Text('Reminder sent to $name')),
             );
           }
+        }
+        break;
+    }
+  }
+  
+    Future<void> _handleVoiceEvent(VoiceEvent evt) async {
+    if (evt.type != 'action') return;
+    switch (evt.payload) {
+      case 'invoice.write_off':
+        final id = evt.data['invoiceId']?.toString();
+        if (id != null) {
+          await InvoiceService.writeOffInvoice(id);
+          await loadInvoices();
+        }
+        break;
+      case 'invoice.send':
+        final id = evt.data['invoiceId']?.toString();
+        if (id != null) {
+          await InvoiceService.sendInvoice(id);
         }
         break;
     }
