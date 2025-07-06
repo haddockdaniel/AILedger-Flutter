@@ -3,6 +3,7 @@ import 'package:autoledger/models/email_model.dart';
 import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/services/email_service.dart';
 import 'package:autoledger/services/contact_service.dart';
+import 'package:autoledger/services/scheduler_service.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/utils/voice_events.dart';
 import 'package:autoledger/widgets/search_bar.dart';
@@ -72,6 +73,34 @@ class _EmailsWidgetState extends State<EmailsWidget> {
         if (id != null) {
           final match = _emails.where((e) => e.emailId == id);
           if (match.isNotEmpty) _sendEmail(match.first);
+        }
+        break;
+		      case 'schedule_email':
+        final contactName = evt.slots?['contact'];
+        final dateStr = evt.slots?['date'];
+        final timeStr = evt.slots?['time'];
+        if (contactName != null && dateStr != null && timeStr != null) {
+          final contact = _contacts.firstWhere(
+            (c) => c.fullName.toLowerCase() == contactName.toString().toLowerCase(),
+            orElse: () => Contact.empty(),
+          );
+          if (contact.contactId.isNotEmpty) {
+            final email = Email(
+              emailId: '',
+              userId: '',
+              customerId: contact.contactId,
+              subject: 'Follow up',
+              body: 'Just following up as discussed.',
+              createdAt: DateTime.now(),
+              templateId: null,
+            );
+            final created = await EmailService.createEmail(email);
+            final sendDate = DateTime.parse('$dateStr $timeStr');
+            await SchedulerService.scheduleEmail(created, sendDate);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Scheduled email to ${contact.fullName}')), 
+            );
+          }
         }
         break;
       case 'search_emails':

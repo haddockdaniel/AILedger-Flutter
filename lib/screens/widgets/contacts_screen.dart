@@ -88,7 +88,52 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   Future<void> _handleVoiceIntent(VoiceIntentEvent evt) async {
-    // ... your existing voice logic (unchanged) ...
+    switch (evt.intent) {
+      case 'add_contact':
+        _goToForm();
+        break;
+      case 'edit_contact':
+        final id = evt.slots?['identifier'];
+        if (id != null) {
+          final match = _all.firstWhere(
+            (c) => c.email == id || c.phone == id,
+            orElse: () => Contact.empty(),
+          );
+          if (match.contactId.isNotEmpty) _goToForm(match);
+        }
+        break;
+      case 'delete_contact':
+        final id = evt.slots?['identifier'];
+        if (id != null) {
+          final match = _all.firstWhere(
+            (c) => c.email == id || c.phone == id,
+            orElse: () => Contact.empty(),
+          );
+          if (match.contactId.isNotEmpty) {
+            await ContactService.deleteContact(match.contactId);
+            _load();
+          }
+        }
+        break;
+      case 'search_contacts':
+        final q = evt.slots?['query'] ?? '';
+        _searchCtrl.text = q;
+        _applySearch(q);
+        break;
+      case 'show_contact':
+        final id = evt.slots?['identifier'];
+        if (id != null) {
+          final match = _all.firstWhere(
+            (c) => c.email == id || c.phone == id,
+            orElse: () => Contact.empty(),
+          );
+          if (match.contactId.isNotEmpty) _goToDetail(match);
+        }
+        break;
+      case 'scan_card':
+        _scanBusinessCard();
+        break;
+    }
   }
 
   @override

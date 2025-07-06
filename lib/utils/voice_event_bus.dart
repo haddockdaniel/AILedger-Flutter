@@ -6,8 +6,10 @@ class VoiceEventBus {
   factory VoiceEventBus() => _instance;
   VoiceEventBus._internal();
 
-  final StreamController<dynamic> _typedController = StreamController.broadcast();
-  final StreamController<_NamedEvent> _namedController = StreamController.broadcast();
+  final StreamController<dynamic> _typedController =
+      StreamController.broadcast();
+  final StreamController<_NamedEvent> _namedController =
+      StreamController.broadcast();
 
   /// Listen for typed voice events
   Stream<T> on<T>() {
@@ -31,10 +33,6 @@ class VoiceEventBus {
 
   static void emitIntent(String intent, [Map<String, dynamic>? slots]) {
     _instance.emit(VoiceIntentEvent(intent, slots: slots));
-  }
-
-  void emit(VoiceEvent event) {
-    _controller.add(event);
   }
 
   void dispose() {
