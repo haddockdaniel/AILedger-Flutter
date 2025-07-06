@@ -25,6 +25,8 @@ dependencies:
   dio: ^5.4.1
   shimmer: ^3.0.0
   dart_openai: ^5.1.0
+  google_mlkit_text_recognition: ^0.10.0
+  aws_s3_client: ^2.0.0
 
 dev_dependencies:
   flutter_test:

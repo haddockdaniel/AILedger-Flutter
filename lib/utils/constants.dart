@@ -6,6 +6,11 @@ import 'package:autoledger/services/auth_service.dart';
 const String apiBaseUrl =
     String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:3000');
 
+const String awsRegion = String.fromEnvironment('AWS_REGION', defaultValue: 'us-east-1');
+const String awsBucket = String.fromEnvironment('AWS_BUCKET', defaultValue: '');
+const String awsAccessKey = String.fromEnvironment('AWS_ACCESS_KEY', defaultValue: '');
+const String awsSecretKey = String.fromEnvironment('AWS_SECRET_KEY', defaultValue: '');
+
 class SessionManager {
   static final _authService = AuthService();
   static Timer? _refreshTimer;

@@ -99,4 +99,20 @@ class ExpenseService {
       throw Exception('Failed to delete expense');
     }
   }
+  
+    static Future<void> attachReceipt(String id, String url) async {
+    final token = await _getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/$id/receipt'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'url': url}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to attach receipt');
+    }
+  }
+  
 }

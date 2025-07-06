@@ -5,6 +5,7 @@ import 'package:autoledger/services/expense_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/utils/voice_assistant.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'expense_form_screen.dart';
 
 class ExpensesWidget extends StatefulWidget {
   @override
@@ -52,11 +53,25 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
   }
 
   void addExpense() {
-    VoiceAssistant().simulateCommand("Add expense");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ExpenseFormScreen(),
+      ),
+    ).then((value) {
+      if (value != null) loadExpenses();
+    });
   }
 
   void editExpense(Expense expense) {
-    VoiceAssistant().simulateCommand("Edit expense ${expense.id}");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ExpenseFormScreen(editExpense: expense),
+      ),
+    ).then((value) {
+      if (value != null) loadExpenses();
+    });
   }
 
   void deleteExpense(Expense expense) async {
