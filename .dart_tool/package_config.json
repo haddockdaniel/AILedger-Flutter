@@ -99,9 +99,9 @@
     },
     {
       "name": "file_picker",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/file_picker-6.2.1",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/file_picker-10.2.0",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.4"
     },
     {
       "name": "file_selector_linux",
@@ -141,7 +141,7 @@
     },
     {
       "name": "flutter_secure_storage",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage-8.1.0",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage-9.2.4",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -171,7 +171,7 @@
     },
     {
       "name": "flutter_secure_storage_windows",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_windows-2.1.1",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_windows-3.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -183,9 +183,9 @@
     },
     {
       "name": "flutter_tts",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_tts-3.8.5",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_tts-4.2.3",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.4"
     },
     {
       "name": "flutter_web_plugins",
@@ -195,9 +195,9 @@
     },
     {
       "name": "http",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/http-0.13.6",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.4.0",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.4"
     },
     {
       "name": "http_parser",
@@ -261,9 +261,9 @@
     },
     {
       "name": "intl",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.18.1",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.20.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.3"
     },
     {
       "name": "js",
@@ -483,9 +483,9 @@
     },
     {
       "name": "shimmer",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/shimmer-2.0.0",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/shimmer-3.0.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.17"
     },
     {
       "name": "sky_engine",
@@ -501,15 +501,9 @@
     },
     {
       "name": "speech_to_text",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/speech_to_text-6.6.0",
+      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/speech_to_text-7.1.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "speech_to_text_macos",
-      "rootUri": "file:///C:/Users/Zephyr%20Experiences/AppData/Local/Pub/Cache/hosted/pub.dev/speech_to_text_macos-1.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.3"
     },
     {
       "name": "speech_to_text_platform_interface",
