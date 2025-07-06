@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
 import '../utils/constants.dart';
+import '../models/voice_command_result.dart';
 
 class VoiceService {
   static String get _baseUrl => '$apiBaseUrl/api/voice';
@@ -26,6 +27,11 @@ class VoiceService {
     } else {
       throw Exception('Voice intent processing failed');
     }
+  }
+  
+    static Future<VoiceCommandResult> processCommand(String transcript) async {
+    final data = await sendVoiceCommand(transcript);
+    return VoiceCommandResult.fromJson(data);
   }
 
   static Future<void> cancelActiveIntent() async {

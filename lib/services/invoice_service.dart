@@ -152,4 +152,16 @@ class InvoiceService {
       throw Exception('Failed to send invoice');
     }
   }
+  
+  static Future<void> sendPastDueReminder(String id) async {
+    final token = await _getToken();
+    final response = await http.post(
+      Uri.parse('$apiBaseUrl/api/invoices/$id/reminder'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to send reminder');
+    }
+  }
+  
 }

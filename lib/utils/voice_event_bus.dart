@@ -40,3 +40,9 @@ class VoiceEventBus {
     _namedController.close();
   }
 }
+
+class _NamedEvent {
+  final String name;
+  final dynamic data;
+  _NamedEvent(this.name, this.data);
+}

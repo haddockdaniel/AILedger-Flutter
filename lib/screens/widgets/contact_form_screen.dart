@@ -4,6 +4,7 @@ import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/loading_indicator.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:autoledger/utils/voice_events.dart';
 
 class ContactFormScreen extends StatefulWidget {
   final Contact? editContact;

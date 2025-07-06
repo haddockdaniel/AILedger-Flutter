@@ -4,6 +4,7 @@ import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/utils/voice_assistant.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:autoledger/utils/voice_events.dart';
 import 'package:autoledger/screens/widgets/template_picker.dart';
 import 'package:autoledger/screens/widgets/invoice_detail.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';  // ← new
@@ -29,14 +30,18 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
       applySearchFilter(query);
     });
     VoiceEventBus().onEvent('navigate_invoice_detail', (id) {
-      final invoice = invoices.firstWhere((i) => i.id == id, orElse: () => Invoice.empty());
-      if (invoice.id.isNotEmpty) {
+      final match = invoices.firstWhere(
+        (i) => i.invoiceId.toString() == id.toString(),
+        orElse: () => null,
+      );
+      if (match != null) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => InvoiceDetail(invoice: invoice)),
+          MaterialPageRoute(builder: (context) => InvoiceDetail(invoiceId: match.invoiceId)),
         );
       }
     });
+	    VoiceEventBus().on<VoiceIntentEvent>().listen(_handleVoiceIntent);
   }
 
   Future<void> loadInvoices() async {
@@ -78,9 +83,35 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => InvoiceDetail(invoice: invoice),
+        builder: (context) => InvoiceDetail(invoiceId: invoice.invoiceId),
       ),
     );
+  }
+  
+    Future<void> _handleVoiceIntent(VoiceIntentEvent evt) async {
+    switch (evt.intent) {
+      case 'send_invoice_reminder':
+        final name = (evt.slots?['customer'] ?? evt.slots?['contact'])?.toString();
+        if (name == null) return;
+        final lower = name.toLowerCase();
+        Invoice? match;
+        for (final i in invoices) {
+          if (i.customerName.toLowerCase() == lower &&
+              i.status.toLowerCase().contains('overdue')) {
+            match = i;
+            break;
+          }
+        }
+        if (match != null) {
+          await InvoiceService.sendPastDueReminder(match.invoiceId.toString());
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Reminder sent to $name')),
+            );
+          }
+        }
+        break;
+    }
   }
 
   @override

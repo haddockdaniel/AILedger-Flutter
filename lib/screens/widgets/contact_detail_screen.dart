@@ -5,6 +5,7 @@ import 'package:autoledger/screens/widgets/contact_form_screen.dart';
 import 'package:autoledger/widgets/loading_indicator.dart';
 import 'package:autoledger/widgets/confirmation_dialog.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:autoledger/utils/voice_events.dart';
 import 'package:autoledger/theme/app_theme.dart';
 
 class ContactDetailScreen extends StatefulWidget {

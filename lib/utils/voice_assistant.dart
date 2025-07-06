@@ -45,6 +45,11 @@ class VoiceAssistant {
       _isListening = false;
     }
   }
+  
+    /// Simulate handling a text command without speech input
+  void simulateCommand(String text) {
+    _processText(text);
+  }
 
   Future<void> _processText(String inputText) async {
     try {
