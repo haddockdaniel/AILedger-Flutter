@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/invoice_template_model.dart';
 import '../utils/secure_storage.dart';
+import '../utils/constants.dart';
 
 class InvoiceTemplateService {
-  static const String baseUrl = 'https://your-api-url.com/api/invoice-templates';
+  static String get baseUrl => '$apiBaseUrl/api/invoice-templates';
 
   static Future<String?> _getAuthToken() async {
     return await SecureStorage.getToken();

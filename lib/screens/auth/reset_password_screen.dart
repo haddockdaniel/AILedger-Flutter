@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/utils/constants.dart';
 import '../widgets/error_snackbar.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://your-api-url.com/api/auth/request-reset'),
+        Uri.parse('$apiBaseUrl/api/auth/request-reset'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email}),
       );

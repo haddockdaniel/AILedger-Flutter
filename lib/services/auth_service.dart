@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
 
 class AuthService {
-  static const String _baseUrl = 'https://your-api-domain.com/api/auth';
+  /// Base path for authentication endpoints.
+  static String get _baseUrl => '$apiBaseUrl/api/auth';
 
   static Future<bool> login(String email, String password) async {
     final response = await http.post(
@@ -52,6 +53,9 @@ class AuthService {
       return false;
     }
   }
+  
+ /// Public wrapper used by [SessionManager] to refresh tokens periodically.
+  static Future<bool> refresh() => refreshToken();
 
 static Future<String> signUp(String email, String password) async {
   final res = await http.post(

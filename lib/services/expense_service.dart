@@ -4,9 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import '../models/expense_model.dart';
 import '../utils/secure_storage.dart';
+import '../utils/constants.dart';
 
 class ExpenseService {
-  static const String baseUrl = 'https://your-api-url.com/api/expenses';
+  static String get baseUrl => '$apiBaseUrl/api/expenses';
 
   static Future<String?> _getToken() async {
     return await SecureStorage.getToken();

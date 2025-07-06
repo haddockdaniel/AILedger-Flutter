@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
 import '../models/user_model.dart';
+import '../utils/constants.dart';
 
 class UserService {
-  static const String _baseUrl = 'https://your-api-domain.com/api/user';
+  static String get _baseUrl => '$apiBaseUrl/api/user';
 
   static Future<User> fetchUserProfile() async {
     final token = await SecureStorage.getToken();

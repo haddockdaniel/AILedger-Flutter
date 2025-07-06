@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
+import '../utils/constants.dart';
 
 class ReportService {
-  static const String baseUrl = 'https://your-api-url.com/api/reports';
+  static String get baseUrl => '$apiBaseUrl/api/reports';
 
   static Future<String?> _getToken() async {
     return await SecureStorage.getToken();

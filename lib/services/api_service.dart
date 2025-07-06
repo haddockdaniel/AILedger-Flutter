@@ -2,9 +2,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
+import '../utils/constants.dart';
 
 class ApiService {
-  static const String _baseUrl = 'https://your-api-domain.com/api';
+  /// Common base URL for all API requests.
+  static String get _baseUrl => '$apiBaseUrl/api';
 
   static Future<http.Response> get(String endpoint) async {
     final token = await SecureStorage.getToken();

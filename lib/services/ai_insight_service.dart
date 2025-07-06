@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
 import '../models/ai_insight_model.dart';
+import '../utils/constants.dart';
 
 class AiInsightService {
-  static const String _baseUrl = 'https://your-api-domain.com/api/ai';
+  static String get _baseUrl => '$apiBaseUrl/api/ai';
 
   static Future<List<AIInsight>> fetchInsights(String module) async {
     final token = await SecureStorage.getToken();

@@ -2,9 +2,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_storage.dart';
+import '../utils/constants.dart';
 
 class VoiceService {
-  static const String _baseUrl = 'https://your-api-domain.com/api/voice';
+  static String get _baseUrl => '$apiBaseUrl/api/voice';
 
   static Future<Map<String, dynamic>> sendVoiceCommand(String transcript) async {
     final token = await SecureStorage.getToken();
