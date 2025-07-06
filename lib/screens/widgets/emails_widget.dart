@@ -4,6 +4,7 @@ import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/services/email_service.dart';
 import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:autoledger/utils/voice_events.dart';
 import 'package:autoledger/widgets/search_bar.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';  // ← new
 import 'package:autoledger/widgets/confirmation_dialog.dart';
@@ -48,19 +49,130 @@ class _EmailsWidgetState extends State<EmailsWidget> {
   }
 
   Future<void> _handleVoiceIntent(VoiceIntentEvent evt) async {
-    // ... existing voice logic unchanged ...
+    switch (evt.intent) {
+      case 'compose_email':
+        _showEmailForm();
+        break;
+      case 'edit_email':
+        final id = evt.slots?['emailId'];
+        if (id != null) {
+          final match = _emails.where((e) => e.emailId == id);
+          if (match.isNotEmpty) _showEmailForm(edit: match.first);
+        }
+        break;
+      case 'delete_email':
+        final id = evt.slots?['emailId'];
+        if (id != null) {
+          final match = _emails.where((e) => e.emailId == id);
+          if (match.isNotEmpty) _deleteEmail(match.first);
+        }
+        break;
+      case 'send_email':
+        final id = evt.slots?['emailId'];
+        if (id != null) {
+          final match = _emails.where((e) => e.emailId == id);
+          if (match.isNotEmpty) _sendEmail(match.first);
+        }
+        break;
+      case 'search_emails':
+        final q = evt.slots?['query'] ?? '';
+        _searchCtrl.text = q;
+        _applySearch(q);
+        break;
+    }
   }
 
   Future<void> _showEmailForm({Email? edit}) async {
-    // ... existing form logic ...
+    final subjectCtrl = TextEditingController(text: edit?.subject);
+    final bodyCtrl = TextEditingController(text: edit?.body);
+    String? contactId = edit?.customerId;
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(edit == null ? 'Compose Email' : 'Edit Email'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: contactId,
+                decoration: const InputDecoration(labelText: 'Contact'),
+                items: _contacts
+                    .map((c) => DropdownMenuItem(
+                          value: c.contactId,
+                          child: Text('${c.firstName} ${c.lastName}'),
+                        ))
+                    .toList(),
+                onChanged: (v) => contactId = v,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: subjectCtrl,
+                decoration: const InputDecoration(labelText: 'Subject'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: bodyCtrl,
+                decoration: const InputDecoration(labelText: 'Body'),
+                maxLines: 4,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = Email(
+                emailId: edit?.emailId ?? '',
+                userId: edit?.userId ?? '',
+                customerId: contactId,
+                subject: subjectCtrl.text,
+                body: bodyCtrl.text,
+                createdAt: edit?.createdAt ?? DateTime.now(),
+                templateId: edit?.templateId,
+              );
+              if (edit == null) {
+                await EmailService.createEmail(email);
+              } else {
+                await EmailService.updateEmail(email);
+              }
+              Navigator.pop(ctx);
+              _loadData();
+            },
+            child: const Text('Save'),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _deleteEmail(Email e) async {
-    // ... existing delete logic ...
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => ConfirmationDialog(
+        title: 'Delete Email',
+        content: 'Delete email "${e.subject}"?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        onConfirm: () => Navigator.pop(context, true),
+      ),
+    );
+    if (confirmed == true) {
+      await EmailService.deleteEmail(e.emailId);
+      _loadData();
+    }
   }
 
   Future<void> _sendEmail(Email e) async {
-    // ... existing send logic ...
+    await EmailService.sendEmail(e.emailId);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Email sent')),
+    );
   }
 
   @override

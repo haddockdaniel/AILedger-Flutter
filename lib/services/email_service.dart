@@ -78,4 +78,16 @@ class EmailService {
       throw Exception('Failed to delete email');
     }
   }
+  
+  static Future<void> sendEmail(String id) async {
+    final token = await _getToken();
+    final response = await http.post(
+      Uri.parse('$apiBaseUrl/api/emails/$id/send'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to send email');
+    }
+  }
+  
 }

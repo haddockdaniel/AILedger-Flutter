@@ -23,12 +23,12 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
   void initState() {
     super.initState();
     loadInvoices();
-    VoiceEventBus().on('refresh_invoices', (_) => loadInvoices());
-    VoiceEventBus().on('search_invoices', (query) {
+    VoiceEventBus().onEvent('refresh_invoices', (_) => loadInvoices());
+    VoiceEventBus().onEvent('search_invoices', (query) {
       _searchController.text = query;
       applySearchFilter(query);
     });
-    VoiceEventBus().on('navigate_invoice_detail', (id) {
+    VoiceEventBus().onEvent('navigate_invoice_detail', (id) {
       final invoice = invoices.firstWhere((i) => i.id == id, orElse: () => Invoice.empty());
       if (invoice.id.isNotEmpty) {
         Navigator.push(

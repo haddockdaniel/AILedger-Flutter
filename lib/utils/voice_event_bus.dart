@@ -1,30 +1,44 @@
 import 'dart:async';
-
-class VoiceEvent {
-  final String type; // e.g., 'navigate', 'refresh', 'action'
-  final String payload; // e.g., 'customers', 'invoices', 'add_task'
-  final dynamic data;
-
-  VoiceEvent({required this.type, required this.payload, this.data});
-}
+import 'voice_events.dart';
 
 class VoiceEventBus {
   static final VoiceEventBus _instance = VoiceEventBus._internal();
-  final StreamController<VoiceEvent> _controller = StreamController.broadcast();
-
-  factory VoiceEventBus() {
-    return _instance;
-  }
-
+  factory VoiceEventBus() => _instance;
   VoiceEventBus._internal();
 
-  Stream<VoiceEvent> get stream => _controller.stream;
+  final StreamController<dynamic> _typedController = StreamController.broadcast();
+  final StreamController<_NamedEvent> _namedController = StreamController.broadcast();
+
+  /// Listen for typed voice events
+  Stream<T> on<T>() {
+    return _typedController.stream.where((e) => e is T).cast<T>();
+  }
+
+  /// Listen for string-named events
+  StreamSubscription onEvent(String name, void Function(dynamic) handler) {
+    return _namedController.stream
+        .where((e) => e.name == name)
+        .listen((e) => handler(e.data));
+  }
+
+  void emit(dynamic event) {
+    _typedController.add(event);
+  }
+
+  void emitEvent(String name, [dynamic data]) {
+    _namedController.add(_NamedEvent(name, data));
+  }
+
+  static void emitIntent(String intent, [Map<String, dynamic>? slots]) {
+    _instance.emit(VoiceIntentEvent(intent, slots: slots));
+  }
 
   void emit(VoiceEvent event) {
     _controller.add(event);
   }
 
   void dispose() {
-    _controller.close();
+    _typedController.close();
+    _namedController.close();
   }
 }

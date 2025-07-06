@@ -22,8 +22,8 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
     super.initState();
     loadExpenses();
 
-    VoiceEventBus().on('refresh_expenses', (_) => loadExpenses());
-    VoiceEventBus().on('search_expenses', (query) {
+    VoiceEventBus().onEvent('refresh_expenses', (_) => loadExpenses());
+    VoiceEventBus().onEvent('search_expenses', (query) {
       _searchController.text = query;
       applySearch(query);
     });

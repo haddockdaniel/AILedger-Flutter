@@ -4,6 +4,7 @@ import 'package:autoledger/services/task_service.dart';
 import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:autoledger/utils/voice_events.dart';
 import 'package:autoledger/widgets/search_bar.dart';
 import 'package:autoledger/widgets/confirmation_dialog.dart';
 import 'package:autoledger/screens/widgets/task_form_screen.dart';
@@ -74,7 +75,39 @@ class _TasksWidgetState extends State<TasksWidget> {
   }
 
   Future<void> _handleVoiceIntent(VoiceIntentEvent evt) async {
-    // ... existing voice logic unchanged ...
+    switch (evt.intent) {
+      case 'add_task':
+        _openForm();
+        break;
+      case 'edit_task':
+        final id = evt.slots?['taskId'];
+        if (id != null) {
+          final match = _tasks.where((t) => t.taskId == id);
+          if (match.isNotEmpty) {
+            _openForm(match.first);
+          }
+        }
+        break;
+      case 'delete_task':
+        final id = evt.slots?['taskId'];
+        if (id != null) {
+          final match = _tasks.where((t) => t.taskId == id);
+          if (match.isNotEmpty) _deleteTask(match.first);
+        }
+        break;
+      case 'search_tasks':
+        final q = evt.slots?['query'] ?? '';
+        _searchController.text = q;
+        _applySearch(q);
+        break;
+      case 'complete_task':
+        final id = evt.slots?['taskId'];
+        if (id != null) {
+          await TaskService.markTaskComplete(id);
+          await _loadTasks();
+        }
+        break;
+    }
   }
 
   @override

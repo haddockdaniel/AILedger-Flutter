@@ -35,12 +35,12 @@ class _ReportsWidgetState extends State<ReportsWidget> {
   @override
   void initState() {
     super.initState();
-    VoiceEventBus().on('refresh_reports', (_) => _loadReport());
-    VoiceEventBus().on('set_report_type', (type) {
+    VoiceEventBus().onEvent('refresh_reports', (_) => _loadReport());
+    VoiceEventBus().onEvent('set_report_type', (type) {
       setState(() => selectedReport = type);
       _loadReport();
     });
-    VoiceEventBus().on('export_report', (format) => _exportReport(format));
+    VoiceEventBus().onEvent('export_report', (format) => _exportReport(format));
     _loadReport();
   }
 
