@@ -59,14 +59,12 @@ class _AIInsightsWidgetState extends State<AIInsightsWidget> {
           children: [
             if (_insights!.containsKey('invoices'))
               _buildInsightCard("Invoices", _insights!['invoices']),
-            if (_insights!.containsKey('customers'))
-              _buildInsightCard("Customers", _insights!['customers']),
-            if (_insights!.containsKey('expenses'))
-              _buildInsightCard("Expenses", _insights!['expenses']),
-            if (_insights!.containsKey('cashFlow'))
-              _buildInsightCard("Cash Flow", _insights!['cashFlow']),
-            if (_insights!.containsKey('taxes'))
-              _buildInsightCard("Taxes", _insights!['taxes']),
+            if (_insights!.containsKey('tasks'))
+              _buildInsightCard("Tasks", _insights!['tasks']),
+            if (_insights!.containsKey('emails'))
+              _buildInsightCard("Emails", _insights!['emails']),
+            if (_insights!.containsKey('general'))
+              _buildInsightCard("General", _insights!['general']),
           ],
         ),
       ),
