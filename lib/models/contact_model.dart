@@ -18,6 +18,19 @@ class Contact {
     this.phone,
     this.notes,
   });
+  
+    String get fullName => '$firstName $lastName';
+
+  static Contact empty() => Contact(
+        contactId: '',
+        userId: '',
+        firstName: '',
+        lastName: '',
+        businessName: null,
+        email: null,
+        phone: null,
+        notes: null,
+      );
 
   factory Contact.fromJson(Map<String, dynamic> json) {
     return Contact(

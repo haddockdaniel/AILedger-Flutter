@@ -18,7 +18,8 @@ class DashboardScreen extends StatefulWidget {
   final String initialRoute;
   final Map<String, dynamic>? routeArgs;
 
-  const DashboardScreen({Key? key, this.initialRoute = '/customers', this.routeArgs})
+  const DashboardScreen(
+      {Key? key, this.initialRoute = '/customers', this.routeArgs})
       : super(key: key);
 
   @override
@@ -49,7 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     switch (screen) {
       case '/customers':
         if (args != null && args.containsKey('customerId')) {
-          return CustomerDetail(customerId: args['customerId']);
+          return CustomerDetail(customerId: args['customerId'].toString());
         }
         return const CustomersWidget();
       case '/invoices':
@@ -69,8 +70,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return const AIInsightsWidget();
       case '/settings':
         return const PaymentSettingsScreen();
-case '/profile':
-return const ProfileScreen();
+      case '/profile':
+        return const ProfileScreen();
       default:
         return const Center(child: Text('Unknown screen'));
     }
@@ -125,7 +126,8 @@ return const ProfileScreen();
           children: [
             DrawerHeader(
               decoration: BoxDecoration(color: AppTheme.primaryColor),
-              child: const Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
+              child: const Text('Menu',
+                  style: TextStyle(color: Colors.white, fontSize: 24)),
             ),
             _buildDrawerItem('Customers', '/customers'),
             _buildDrawerItem('Invoices', '/invoices'),

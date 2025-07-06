@@ -35,6 +35,21 @@ class InvoiceService {
       throw Exception('Failed to load invoice');
     }
   }
+  
+    static Future<List<Invoice>> getInvoicesByCustomerId(
+      String customerId) async {
+    final token = await _getToken();
+    final response = await http.get(
+      Uri.parse('$apiBaseUrl/api/invoices?customerId=$customerId'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      final list = jsonDecode(response.body) as List<dynamic>;
+      return list.map((j) => Invoice.fromJson(j)).toList();
+    } else {
+      throw Exception('Failed to load invoices');
+    }
+  }
 
   static Future<Invoice> createInvoice(Invoice invoice) async {
     final token = await _getToken();

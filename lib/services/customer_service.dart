@@ -18,15 +18,16 @@ class CustomerService {
       final data = json.decode(res.body) as List;
       return data.map((e) => Customer.fromJson(e)).toList();
     }
-	    throw Exception('Failed to load customers');
+    throw Exception('Failed to load customers');
   }
 
-  static Future<Customer> fetchCustomerById(String id) async {
-    final res = await http.get(Uri.parse('$_baseUrl/$id'), headers: await _headers());
+  static Future<Customer> getCustomerById(String id) async {
+    final res =
+        await http.get(Uri.parse('$_baseUrl/$id'), headers: await _headers());
     if (res.statusCode == 200) {
       return Customer.fromJson(json.decode(res.body));
     }
-	    throw Exception('Customer not found');
+    throw Exception('Customer not found');
   }
 
   static Future<void> addCustomer(Customer customer) async {
@@ -46,7 +47,8 @@ class CustomerService {
   }
 
   static Future<void> deleteCustomer(String id) async {
-    final res = await http.delete(Uri.parse('$_baseUrl/$id'), headers: await _headers());
+    final res = await http.delete(Uri.parse('$_baseUrl/$id'),
+        headers: await _headers());
     if (res.statusCode != 200) {
       throw Exception('Failed to delete customer');
     }

@@ -1,7 +1,7 @@
 class Customer {
   final String customerId;
   final String userId;
-  final String name;
+  final String fullName;
   final String? companyName;
   final String phone;
   final String email;
@@ -17,7 +17,7 @@ class Customer {
   Customer({
     required this.customerId,
     required this.userId,
-    required this.name,
+    required this.fullName,
     this.companyName,
     required this.phone,
     required this.email,
@@ -30,12 +30,56 @@ class Customer {
     required this.oldestDelinquentInvoice,
     required this.invoicePreference,
   });
+  
+    factory Customer.basic({
+    String customerId = '',
+    String userId = '',
+    required String fullName,
+    required String phone,
+    required String email,
+    String invoicePreference = 'email',
+  }) =>
+      Customer(
+        customerId: customerId,
+        userId: userId,
+        fullName: fullName,
+        companyName: null,
+        phone: phone,
+        email: email,
+        addresses: const [],
+        tags: const [],
+        notes: null,
+        totalOwed: 0,
+        totalPaid: 0,
+        daysSinceFirstInvoice: 0,
+        oldestDelinquentInvoice: 0,
+        invoicePreference: invoicePreference,
+      );
+
+  String get id => customerId;
+
+  static Customer empty() => Customer(
+        customerId: '',
+        userId: '',
+        fullName: '',
+        companyName: null,
+        phone: '',
+        email: '',
+        addresses: const [],
+        tags: const [],
+        notes: null,
+        totalOwed: 0,
+        totalPaid: 0,
+        daysSinceFirstInvoice: 0,
+        oldestDelinquentInvoice: 0,
+        invoicePreference: 'email',
+      );
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
       customerId: json['customerId'],
       userId: json['userId'],
-      name: json['name'],
+      fullName: json['fullName'] ?? json['name'] ?? '',
       companyName: json['companyName'],
       phone: json['phone'],
       email: json['email'],
@@ -56,7 +100,7 @@ class Customer {
     return {
       'customerId': customerId,
       'userId': userId,
-      'name': name,
+      'fullName': fullName,
       'companyName': companyName,
       'phone': phone,
       'email': email,

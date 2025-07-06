@@ -28,7 +28,8 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
   Future<void> _loadInvoice() async {
     try {
       final invoice = await InvoiceService.getInvoiceById(widget.invoiceId);
-      final customer = await CustomerService.getCustomerById(invoice.customerId);
+      final customer =
+          await CustomerService.getCustomerById(invoice.customerId);
 
       setState(() {
         _invoice = invoice;
@@ -49,8 +50,12 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
         title: const Text("Write Off Invoice"),
         content: const Text("Are you sure you want to write off this invoice?"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Yes")),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel")),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text("Yes")),
         ],
       ),
     );
@@ -66,10 +71,15 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Cancel Invoice"),
-        content: const Text("Are you sure you want to cancel this invoice? This action cannot be undone."),
+        content: const Text(
+            "Are you sure you want to cancel this invoice? This action cannot be undone."),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Yes")),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel")),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text("Yes")),
         ],
       ),
     );
@@ -85,7 +95,8 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
       children: _invoice!.lineItems.map((item) {
         return ListTile(
           title: Text(item.description),
-          subtitle: Text("Qty: ${item.quantity} x \$${item.unitPrice.toStringAsFixed(2)}"),
+          subtitle: Text(
+              "Qty: ${item.quantity} x \$${item.unitPrice.toStringAsFixed(2)}"),
           trailing: Text(
             "\$${(item.quantity * item.unitPrice).toStringAsFixed(2)}",
             style: AppTheme.subHeaderStyle,
@@ -114,7 +125,8 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Customer: ${_customer!.fullName}", style: AppTheme.headerStyle),
+            Text("Customer: ${_customer!.fullName}",
+                style: AppTheme.headerStyle),
             Text("Email: ${_customer!.email}"),
             Text("Phone: ${_customer!.phone}"),
             const Divider(height: 32),
@@ -126,14 +138,16 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
                 trailing: Text("\$${_invoice!.taxAmount.toStringAsFixed(2)}"),
               ),
             ListTile(
-              title: const Text("Total", style: TextStyle(fontWeight: FontWeight.bold)),
+              title: const Text("Total",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               trailing: Text(
                 "\$${_invoice!.total.toStringAsFixed(2)}",
                 style: AppTheme.headerStyle,
               ),
             ),
             const SizedBox(height: 16),
-            Text("Status: ${isCanceled ? 'Canceled' : isWrittenOff ? 'Written Off' : isPaid ? 'Paid' : 'Unpaid'}"),
+            Text(
+                "Status: ${isCanceled ? 'Canceled' : isWrittenOff ? 'Written Off' : isPaid ? 'Paid' : 'Unpaid'}"),
             if (!isPaid && !isCanceled && !isWrittenOff)
               Row(
                 children: [
@@ -146,13 +160,14 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
                   ElevatedButton.icon(
                     icon: const Icon(Icons.cancel),
                     label: const Text("Cancel"),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: _cancelInvoice,
                   ),
                 ],
               ),
             const SizedBox(height: 20),
-            Text("AI Insights: 🚧 (coming soon)", style: AppTheme.subHeaderStyle),
+            // Placeholder for future AI insights
           ],
         ),
       ),

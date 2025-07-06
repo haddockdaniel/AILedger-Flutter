@@ -6,7 +6,7 @@ import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 
 class CustomerDetail extends StatefulWidget {
-  final int customerId;
+  final String customerId;
 
   const CustomerDetail({Key? key, required this.customerId}) : super(key: key);
 
@@ -30,7 +30,8 @@ class _CustomerDetailState extends State<CustomerDetail> {
   Future<void> _loadCustomerData() async {
     try {
       final customer = await CustomerService.getCustomerById(widget.customerId);
-      final invoices = await InvoiceService.getInvoicesByCustomerId(widget.customerId);
+      final invoices =
+          await InvoiceService.getInvoicesByCustomerId(widget.customerId);
 
       setState(() {
         _customer = customer;
@@ -51,7 +52,8 @@ class _CustomerDetailState extends State<CustomerDetail> {
         return Card(
           child: ListTile(
             leading: const Icon(Icons.location_on),
-            title: Text('${addr.street}, ${addr.city}, ${addr.state} ${addr.zip}'),
+            title:
+                Text('${addr.street}, ${addr.city}, ${addr.state} ${addr.zip}'),
           ),
         );
       }).toList(),
@@ -65,8 +67,10 @@ class _CustomerDetailState extends State<CustomerDetail> {
         Text(title, style: AppTheme.sectionHeader),
         ...invoices.map((inv) => Card(
               child: ListTile(
-                title: Text('Invoice #${inv.invoiceNumber} - \$${inv.total.toStringAsFixed(2)}'),
-                subtitle: Text('Due: ${inv.dueDate.toLocal().toShortDateString()}'),
+                title: Text(
+                    'Invoice #${inv.invoiceNumber} - \$${inv.total.toStringAsFixed(2)}'),
+                subtitle:
+                    Text('Due: ${inv.dueDate.toLocal().toShortDateString()}'),
                 trailing: inv.isPaid
                     ? const Icon(Icons.check_circle, color: Colors.green)
                     : const Icon(Icons.warning, color: Colors.orange),
@@ -101,7 +105,7 @@ class _CustomerDetailState extends State<CustomerDetail> {
           const SizedBox(height: 16),
           _buildInvoiceList(_paidInvoices, 'Paid Invoices'),
           const SizedBox(height: 16),
-          Text('AI Insights: (coming soon)', style: AppTheme.subHeaderStyle),
+          // Placeholder for future AI insights
         ],
       ),
     );

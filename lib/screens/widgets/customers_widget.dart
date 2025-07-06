@@ -64,14 +64,16 @@ class _CustomersWidgetState extends State<CustomersWidget> {
         break;
       case 'view_customer':
         final id = data['customerId'];
-        final match = _customers.firstWhere((c) => c.id == id, orElse: () => Customer.empty());
-        if (match.id.isNotEmpty) _openDetail(match);
+        final match = _customers.firstWhere((c) => c.customerId == id,
+            orElse: () => Customer.empty());
+        if (match.customerId.isNotEmpty) _openDetail(match);
         break;
     }
   }
 
   void _showCustomerForm([Customer? existing]) {
-    final nameController = TextEditingController(text: existing?.fullName ?? '');
+    final nameController =
+        TextEditingController(text: existing?.fullName ?? '');
     final emailController = TextEditingController(text: existing?.email ?? '');
     final phoneController = TextEditingController(text: existing?.phone ?? '');
     String invoicePref = existing?.invoicePreference ?? 'email';
@@ -83,13 +85,20 @@ class _CustomersWidgetState extends State<CustomersWidget> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Name')),
-            TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
-            TextField(controller: phoneController, decoration: const InputDecoration(labelText: 'Phone')),
+            TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name')),
+            TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email')),
+            TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(labelText: 'Phone')),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               value: invoicePref,
-              decoration: const InputDecoration(labelText: 'Invoice Preference'),
+              decoration:
+                  const InputDecoration(labelText: 'Invoice Preference'),
               items: const [
                 DropdownMenuItem(value: 'email', child: Text('Email')),
                 DropdownMenuItem(value: 'text', child: Text('Text')),
@@ -99,11 +108,12 @@ class _CustomersWidgetState extends State<CustomersWidget> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
-              final customer = Customer(
-                id: existing?.id ?? '',
+              final customer = Customer.basic(
+                customerId: existing?.customerId ?? '',
                 fullName: nameController.text.trim(),
                 email: emailController.text.trim(),
                 phone: phoneController.text.trim(),
@@ -133,7 +143,7 @@ class _CustomersWidgetState extends State<CustomersWidget> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (_) => CustomerDetail(customer: customer),
+      builder: (_) => CustomerDetail(customerId: customer.customerId),
     );
   }
 
@@ -167,7 +177,7 @@ class _CustomersWidgetState extends State<CustomersWidget> {
                     onPressed: () => _showCustomerForm(customer),
                   ),
                   onTap: () => _openDetail(customer),
-                  onLongPress: () => _deleteCustomer(customer.id),
+                  onLongPress: () => _deleteCustomer(customer.customerId),
                 ),
               );
             },
