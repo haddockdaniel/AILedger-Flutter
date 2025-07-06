@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'email_service.dart';
 import '../models/email_model.dart';
+import '../models/task_model.dart';
 
 /// Simple in-memory scheduler for demo purposes.
 class SchedulerService {
   static final Map<String, Timer> _timers = {};
+    static final Map<String, Timer> _taskTimers = {};
 
   /// Schedule sending [email] at [sendAt].
   static Future<void> scheduleEmail(Email email, DateTime sendAt) async {
@@ -26,4 +28,27 @@ class SchedulerService {
     _timers[emailId]?.cancel();
     _timers.remove(emailId);
   }
+  
+    static void scheduleTaskReminder(
+    Task task,
+    DateTime remindAt,
+    Function onReminder,
+  ) {
+    final duration = remindAt.difference(DateTime.now());
+    if (duration.isNegative) {
+      onReminder();
+      return;
+    }
+    _taskTimers[task.taskId]?.cancel();
+    _taskTimers[task.taskId] = Timer(duration, () {
+      onReminder();
+      _taskTimers.remove(task.taskId);
+    });
+  }
+
+  static void cancelTask(String taskId) {
+    _taskTimers[taskId]?.cancel();
+    _taskTimers.remove(taskId);
+  }
+  
 }

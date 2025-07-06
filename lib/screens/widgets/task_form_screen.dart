@@ -20,7 +20,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   late TextEditingController _descCtrl;
   DateTime? _dueDate;
   String? _priority;
-  bool _autoReminder = false;
+  bool _autoReminders = false;
   Contact? _selectedContact;
   List<Contact> _contacts = [];
   bool _loading = true;
@@ -31,10 +31,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     _descCtrl = TextEditingController(text: widget.editTask?.description);
     _dueDate = widget.editTask?.dueDate;
     _priority = widget.editTask?.priority;
-    _autoReminder = widget.editTask?.autoReminder ?? false;
-    if (widget.editTask?.linkedContactId != null) {
-      ContactService.getContactById(widget.editTask!.linkedContactId!)
-        .then((c) => setState(() => _selectedContact = c));
+    _autoReminders = widget.editTask?.autoReminders ?? false;
+    if (widget.editTask?.customerId != null) {
+      ContactService.getContactById(widget.editTask!.customerId!)
+          .then((c) => setState(() => _selectedContact = c));
     }
     // load contacts for dropdown
     ContactService.fetchContacts().then((list) {
@@ -66,13 +66,15 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     final t = Task(
-      id: widget.editTask?.id ?? 0,
+      taskId: widget.editTask?.taskId ?? '',
+      userId: widget.editTask?.userId ?? '',
       description: _descCtrl.text.trim(),
-      dueDate: _dueDate,
-      priority: _priority ?? 'Normal',
-      isComplete: widget.editTask?.isComplete ?? false,
-      autoReminder: _autoReminder,
-      linkedContactId: _selectedContact?.contactId,
+      entryDate: widget.editTask?.entryDate ?? DateTime.now(),
+      dueDate: _dueDate ?? DateTime.now(),
+      isCompleted: widget.editTask?.isCompleted ?? false,
+      priority: _priority ?? 'Medium',
+      customerId: _selectedContact?.contactId,
+      autoReminders: _autoReminders,
     );
     if (widget.editTask == null) {
       await TaskService.createTask(t);
@@ -123,8 +125,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     const SizedBox(height: 12),
                     CheckboxListTile(
                       title: const Text('Auto Reminders'),
-                      value: _autoReminder,
-                      onChanged: (v) => setState(() => _autoReminder = v!),
+                      value: _autoReminders,
+                      onChanged: (v) => setState(() => _autoReminders = v!),
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<Contact>(

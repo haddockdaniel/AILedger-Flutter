@@ -5,6 +5,7 @@ import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/utils/voice_events.dart';
+import 'package:autoledger/services/scheduler_service.dart';
 import 'package:autoledger/widgets/search_bar.dart';
 import 'package:autoledger/widgets/confirmation_dialog.dart';
 import 'package:autoledger/screens/widgets/task_form_screen.dart';
@@ -35,6 +36,7 @@ class _TasksWidgetState extends State<TasksWidget> {
     setState(() => _loading = true);
     _tasks = await TaskService.getTasks();
     _applySearch(_searchController.text);
+	_scheduleReminders();
     setState(() => _loading = false);
   }
 
@@ -45,6 +47,24 @@ class _TasksWidgetState extends State<TasksWidget> {
              t.priority.toLowerCase().contains(term);
     }).toList();
     setState(() {});
+  }
+
+  void _scheduleReminders() {
+    for (final t in _tasks) {
+      if (t.autoReminders && !t.isCompleted) {
+        SchedulerService.scheduleTaskReminder(
+          t,
+          t.dueDate,
+          () {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Task due: ${t.description}')),
+              );
+            }
+          },
+        );
+      }
+    }
   }
 
   Future<void> _openForm([Task? edit]) async {
@@ -69,7 +89,8 @@ class _TasksWidgetState extends State<TasksWidget> {
       ),
     );
     if (confirmed == true) {
-      await TaskService.deleteTask(t.id);
+      await TaskService.deleteTask(t.taskId);
+      SchedulerService.cancelTask(t.taskId);
       await _loadTasks();
     }
   }
@@ -104,6 +125,35 @@ class _TasksWidgetState extends State<TasksWidget> {
         final id = evt.slots?['taskId'];
         if (id != null) {
           await TaskService.markTaskComplete(id);
+		            SchedulerService.cancelTask(id);
+          await _loadTasks();
+        }
+        break;
+      case 'schedule_task':
+        final desc = evt.slots?['description'];
+        final dateStr = evt.slots?['date'];
+        final timeStr = evt.slots?['time'];
+        if (desc != null && dateStr != null && timeStr != null) {
+          final due = DateTime.parse('$dateStr $timeStr');
+          final task = Task(
+            taskId: '',
+            userId: '',
+            description: desc,
+            entryDate: DateTime.now(),
+            dueDate: due,
+            isCompleted: false,
+            priority: 'Medium',
+            customerId: null,
+            autoReminders: true,
+          );
+          final created = await TaskService.createTask(task);
+          await SchedulerService.scheduleTaskReminder(created, due, () {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Task due: ${created.description}')),
+              );
+            }
+          });
           await _loadTasks();
         }
         break;
@@ -138,21 +188,29 @@ class _TasksWidgetState extends State<TasksWidget> {
                             return ListTile(
                               title: Text(t.description),
                               subtitle: Text(
-                                'Due: ${t.dueDate?.toLocal().toShortDateString() ?? 'N/A'} • ${t.priority}'
+							'Due: ${t.dueDate.toLocal().toShortDateString()} • ${t.priority}'
                               ),
                               leading: Checkbox(
-                                value: t.isComplete,
+								value: t.isCompleted,
                                 onChanged: (val) async {
                                   final updated = Task(
-                                    id: t.id,
+                                    taskId: t.taskId,
+                                    userId: t.userId,
+                                    description: t.description,
+                                    entryDate: t.entryDate,
+                                    dueDate: t.dueDate,
+                                    isCompleted: val ?? false,
+                                    priority: t.priority,
                                     description: t.description,
                                     dueDate: t.dueDate,
                                     priority: t.priority,
-                                    isComplete: val ?? false,
-                                    autoReminder: t.autoReminder,
-                                    linkedContactId: t.linkedContactId,
+                                    customerId: t.customerId,
+                                    autoReminders: t.autoReminders,
                                   );
                                   await TaskService.updateTask(updated);
+								    if (val == true) {
+                                    SchedulerService.cancelTask(t.taskId);
+                                  }
                                   _loadTasks();
                                 },
                               ),
