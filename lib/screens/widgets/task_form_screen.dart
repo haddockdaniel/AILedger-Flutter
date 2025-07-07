@@ -5,6 +5,7 @@ import 'package:autoledger/services/task_service.dart';
 import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/services/scheduler_service.dart';
 
 class TaskFormScreen extends StatefulWidget {
   final Task? editTask;
@@ -77,7 +78,14 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       autoReminders: _autoReminders,
     );
     if (widget.editTask == null) {
-      await TaskService.createTask(t);
+      final created = await TaskService.createTask(t);
+      if (t.autoReminders && !t.isCompleted) {
+        SchedulerService.scheduleTaskReminder(
+          created,
+          created.dueDate,
+          () {},
+        );
+      }
     } else {
       await TaskService.updateTask(t);
     }

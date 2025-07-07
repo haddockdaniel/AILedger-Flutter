@@ -10,6 +10,7 @@ import '../../services/invoice_service.dart';
 import '../../services/receipt_parser.dart';
 import '../../widgets/skeleton_loader.dart';
 import '../../theme/app_theme.dart';
+import '../../services/scheduler_service.dart';
 
 class ReceiptScannerScreen extends StatefulWidget {
   const ReceiptScannerScreen({Key? key}) : super(key: key);
@@ -125,7 +126,14 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
         updatedAt: null,
         lineItems: [lineItem],
       );
-      await InvoiceService.createInvoice(invoice);
+      final created = await InvoiceService.createInvoice(invoice);
+      if (created.dueDate != null && !created.isPaid && !created.isCanceled) {
+        SchedulerService.scheduleInvoiceReminder(
+          created,
+          created.dueDate!,
+          () {},
+        );
+      }
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {

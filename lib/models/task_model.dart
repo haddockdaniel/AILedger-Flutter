@@ -8,6 +8,7 @@ class Task {
   final String priority; // e.g., Low, Medium, High
   final String? customerId;
   final bool autoReminders;
+  final String? calendarEventId;
 
   Task({
     required this.taskId,
@@ -19,6 +20,7 @@ class Task {
     required this.priority,
     this.customerId,
     required this.autoReminders,
+    this.calendarEventId,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Task {
       priority: json['priority'] ?? 'Medium',
       customerId: json['customerId'],
       autoReminders: json['autoReminders'] ?? false,
+      calendarEventId: json['calendarEventId'],
     );
   }
 
@@ -46,6 +49,7 @@ class Task {
       'priority': priority,
       'customerId': customerId,
       'autoReminders': autoReminders,
+      'calendarEventId': calendarEventId,
     };
   }
 }

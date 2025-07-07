@@ -24,7 +24,8 @@ class Invoice {
   final String? notes;
   final DateTime createdAt;
   final DateTime? updatedAt;
-
+  final String? calendarEventId;
+  
   final List<InvoiceLineItem> lineItems;
 
   Invoice({
@@ -52,6 +53,7 @@ class Invoice {
     required this.createdAt,
     this.updatedAt,
     required this.lineItems,
+	this.calendarEventId,
   });
 
   factory Invoice.fromJson(Map<String, dynamic> json) {
@@ -85,6 +87,7 @@ class Invoice {
               ?.map((item) => InvoiceLineItem.fromJson(item))
               .toList() ??
           [],
+		  calendarEventId: json['calendarEventId'],
     );
   }
 
@@ -114,6 +117,7 @@ class Invoice {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'lineItems': lineItems.map((item) => item.toJson()).toList(),
+	  'calendarEventId': calendarEventId,
     };
   }
 }

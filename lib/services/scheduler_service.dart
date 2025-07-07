@@ -4,6 +4,7 @@ import '../models/email_model.dart';
 import '../models/task_model.dart';
 import '../models/invoice_model.dart';
 import 'notification_service.dart';
+import 'calendar_service.dart';
 
 /// Simple in-memory scheduler for demo purposes.
 class SchedulerService {
@@ -53,18 +54,34 @@ class SchedulerService {
       onReminder();
       _taskTimers.remove(task.taskId);
     });
-	    NotificationService.scheduleNotification(
+    NotificationService.scheduleNotification(
       task.taskId.hashCode,
       'Task Due',
       task.description,
       remindAt,
     );
+	    CalendarService.getTaskEvent(task.taskId).then((existing) async {
+      if (existing != null) return;
+      final id = await CalendarService.createEvent(
+        title: 'Task: ${task.description}',
+        description: 'Task due',
+        start: remindAt,
+        end: remindAt.add(const Duration(hours: 1)),
+      );
+      if (id != null) {
+        await CalendarService.saveTaskEvent(task.taskId, id);
+      }
+    });
   }
 
   static void cancelTask(String taskId) {
     _taskTimers[taskId]?.cancel();
     _taskTimers.remove(taskId);
-	    NotificationService.cancel(taskId.hashCode);
+            NotificationService.cancel(taskId.hashCode);
+    CalendarService.getTaskEvent(taskId).then((id) {
+      CalendarService.deleteEvent(id);
+      CalendarService.removeTaskEvent(taskId);
+    });
   }
 
   static void scheduleInvoiceReminder(
@@ -94,12 +111,28 @@ class SchedulerService {
       'Invoice #${invoice.invoiceNumber} is due',
       remindAt,
     );
+	    CalendarService.getInvoiceEvent(invoice.invoiceId).then((existing) async {
+      if (existing != null) return;
+      final id = await CalendarService.createEvent(
+        title: 'Invoice #${invoice.invoiceNumber} due',
+        description: 'Invoice payment due',
+        start: remindAt,
+        end: remindAt.add(const Duration(hours: 1)),
+      );
+      if (id != null) {
+        await CalendarService.saveInvoiceEvent(invoice.invoiceId, id);
+      }
+    });
   }
 
   static void cancelInvoice(int invoiceId) {
     _invoiceTimers[invoiceId]?.cancel();
     _invoiceTimers.remove(invoiceId);
     NotificationService.cancel(invoiceId);
+	    CalendarService.getInvoiceEvent(invoiceId).then((id) {
+      CalendarService.deleteEvent(id);
+      CalendarService.removeInvoiceEvent(invoiceId);
+    });
   }
   
 }

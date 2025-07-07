@@ -5,6 +5,7 @@ import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/services/customer_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';
+import 'package:autoledger/services/scheduler_service.dart';
 
 class InvoiceDetail extends StatefulWidget {
   final int invoiceId;
@@ -86,6 +87,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
     );
     if (confirmed == true) {
       await InvoiceService.cancelInvoice(_invoice!.invoiceId);
+      SchedulerService.cancelInvoice(_invoice!.invoiceId);
       Navigator.pop(context);
     }
   }
