@@ -21,9 +21,34 @@ class _AIInsightsWidgetState extends State<AIInsightsWidget> {
 
   Future<void> _fetchInsights() async {
     try {
-      final insights = await AIInsightService.getInsights();
+      final basic = await AIInsightService.getInsights();
+      final cashFlow = await AIInsightService.forecastCashFlow();
+      final risk = await AIInsightService.latePaymentRiskScores();
+      final cltv = await AIInsightService.predictCustomerLifetimeValue();
+      final anomalies = await AIInsightService.detectExpenseAnomalies();
+      final actions = await AIInsightService.nextBestCustomerAction();
+
+      String cashFlowSummary = cashFlow
+          .map((e) => "${e['date'].month}/${e['date'].day}: \${e['net'].toStringAsFixed(2)}")
+          .join("\n");
+      String riskSummary = risk.map((e) => "${e['name']}: ${e['score']}%").join("\n");
+      String cltvSummary = cltv.map((e) => "${e['name']}: \$${e['cltv']}").join("\n");
+      String anomalySummary = anomalies.isEmpty
+          ? 'No anomalies detected'
+          : anomalies
+              .map((e) => "${e.vendor}: \$${e.amount.toStringAsFixed(2)} on ${e.date.month}/${e.date.day}")
+              .join("\n");
+      String actionSummary = actions.map((e) => "${e['name']}: ${e['action']}").join("\n");
+
       setState(() {
-        _insights = insights;
+        _insights = {
+          ...basic,
+          'Cash Flow Forecast': cashFlowSummary,
+          'Late Payment Risk': riskSummary,
+          'CLTV Prediction': cltvSummary,
+          'Expense Anomalies': anomalySummary,
+          'Next Best Action': actionSummary,
+        };
         _loading = false;
       });
     } catch (e) {
@@ -65,6 +90,16 @@ class _AIInsightsWidgetState extends State<AIInsightsWidget> {
               _buildInsightCard("Emails", _insights!['emails']),
             if (_insights!.containsKey('general'))
               _buildInsightCard("General", _insights!['general']),
+			if (_insights!.containsKey('Cash Flow Forecast'))
+              _buildInsightCard("Cash Flow Forecast", _insights!['Cash Flow Forecast']),
+            if (_insights!.containsKey('Late Payment Risk'))
+              _buildInsightCard("Late Payment Risk", _insights!['Late Payment Risk']),
+            if (_insights!.containsKey('CLTV Prediction'))
+              _buildInsightCard("CLTV Prediction", _insights!['CLTV Prediction']),
+            if (_insights!.containsKey('Expense Anomalies'))
+              _buildInsightCard("Expense Anomalies", _insights!['Expense Anomalies']),
+            if (_insights!.containsKey('Next Best Action'))
+              _buildInsightCard("Next Best Action", _insights!['Next Best Action']),
           ],
         ),
       ),

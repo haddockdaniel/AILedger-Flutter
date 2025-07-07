@@ -37,7 +37,7 @@ class SessionManager {
     // Refresh every 14 minutes to avoid token expiration
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(const Duration(minutes: 14), (_) async {
-      await _authService.refresh();
+      await AuthService.refresh();
     });
   }
 

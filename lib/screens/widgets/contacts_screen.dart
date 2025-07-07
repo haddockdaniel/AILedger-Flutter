@@ -4,7 +4,8 @@ import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/widgets/search_bar.dart';
 import 'package:autoledger/widgets/loading_indicator.dart';
-import 'package:autoledger/widgets/skeleton_loader.dart';       // ← new
+import 'package:autoledger/widgets/skeleton_loader.dart'; 
+import 'package:autoledger/widgets/empty_state.dart';
 import 'package:autoledger/screens/widgets/contact_form_screen.dart';
 import 'package:autoledger/screens/widgets/contact_detail_screen.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
@@ -169,26 +170,37 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 // ← replaced LoadingIndicator with SkeletonLoader
                 ? const SkeletonLoader()
                 : RefreshIndicator(
-                    onRefresh: _load,
-                    child: ListView.builder(
-                      itemCount: _filtered.length,
-                      itemBuilder: (_, i) {
-                        final c = _filtered[i];
-                        return ListTile(
-                          title: Text('${c.firstName} ${c.lastName}'),
-                          subtitle: Text(c.businessName ?? c.email ?? ''),
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            '/contacts/detail',
-                            arguments: c.contactId,
-                          ).then((_) => _load()),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () => _goToForm(c),
+				    onRefresh: _load,
+                    child: _filtered.isEmpty
+                        ? ListView(
+                            children: const [
+                              SizedBox(height: 200),
+                              EmptyState(
+                                assetPath:
+                                    'lib/assets/illustrations/empty_contacts.png',
+                                title: 'No contacts found',
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            itemCount: _filtered.length,
+                            itemBuilder: (_, i) {
+                              final c = _filtered[i];
+                              return ListTile(
+                                title: Text('${c.firstName} ${c.lastName}'),
+                                subtitle: Text(c.businessName ?? c.email ?? ''),
+                                onTap: () => Navigator.pushNamed(
+                                  context,
+                                  '/contacts/detail',
+                                  arguments: c.contactId,
+                                ).then((_) => _load()),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _goToForm(c),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
           ),
         ],

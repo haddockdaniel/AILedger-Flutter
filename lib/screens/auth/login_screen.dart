@@ -119,8 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         minimumSize: const Size.fromHeight(48),
                       ),
                       child: const Text('Login'),
-              const SizedBox(height: 12),
                     ),
+			  const SizedBox(height: 12),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/signup'),
                 child: const Text(

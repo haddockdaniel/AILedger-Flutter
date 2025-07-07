@@ -5,6 +5,7 @@ import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/utils/search_bar.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/customer_detail.dart';
+import 'package:autoledger/widgets/empty_state.dart';
 
 class CustomersWidget extends StatefulWidget {
   const CustomersWidget({Key? key}) : super(key: key);
@@ -177,25 +178,37 @@ class _CustomersWidgetState extends State<CustomersWidget> {
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: ListView.builder(
-            itemCount: _filteredCustomers.length,
-            itemBuilder: (ctx, index) {
-              final customer = _filteredCustomers[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: ListTile(
-                  title: Text(customer.fullName),
-                  subtitle: Text('${customer.email} | ${customer.phone}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () => _showCustomerForm(customer),
-                  ),
-                  onTap: () => _openDetail(customer),
-                  onLongPress: () => _deleteCustomer(customer.customerId),
+          child: _filteredCustomers.isEmpty
+              ? ListView(
+                  children: const [
+                    SizedBox(height: 200),
+                    EmptyState(
+                      assetPath:
+                          'lib/assets/illustrations/empty_contacts.png',
+                      title: 'No customers found',
+                    ),
+                  ],
+                )
+              : ListView.builder(
+                  itemCount: _filteredCustomers.length,
+                  itemBuilder: (ctx, index) {
+                    final customer = _filteredCustomers[index];
+                    return Card(
+                      margin:
+                          const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      child: ListTile(
+                        title: Text(customer.fullName),
+                        subtitle: Text('${customer.email} | ${customer.phone}'),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _showCustomerForm(customer),
+                        ),
+                        onTap: () => _openDetail(customer),
+                        onLongPress: () => _deleteCustomer(customer.customerId),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
         const SizedBox(height: 8),
         ElevatedButton.icon(

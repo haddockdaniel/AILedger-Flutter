@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/invoice_template_model.dart';
 import '../utils/secure_storage.dart';
 import '../utils/constants.dart';
+import '../data/default_invoice_templates.dart';
 
 class InvoiceTemplateService {
   static String get baseUrl => '$apiBaseUrl/api/invoice-templates';
@@ -77,4 +78,26 @@ class InvoiceTemplateService {
 
     return response.statusCode == 200;
   }
+  
+    /// Return a predefined set of invoice templates for new installs.
+  static Future<List<InvoiceTemplate>> getDefaultTemplates() async {
+    return defaultInvoiceTemplates
+        .map((t) => InvoiceTemplate(
+              templateId: t.templateId,
+              userId: t.userId,
+              templateName: t.templateName,
+              lineItems: t.lineItems
+                  .map((l) => TemplateLineItem(
+                        description: l.description,
+                        amount: l.amount,
+                      ))
+                  .toList(),
+              taxPercentage: t.taxPercentage,
+              chargeTaxes: t.chargeTaxes,
+              sendAutomatically: t.sendAutomatically,
+              createdAt: t.createdAt,
+            ))
+        .toList();
+  }
+  
 }

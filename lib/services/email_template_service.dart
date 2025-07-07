@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/email_template_model.dart';
 import '../utils/secure_storage.dart';
 import '../utils/constants.dart';
+import '../data/default_email_templates.dart';
 
 class EmailTemplateService {
   static String get baseUrl => '$apiBaseUrl/api/email-templates';
@@ -77,4 +78,20 @@ class EmailTemplateService {
 
     return response.statusCode == 200;
   }
+  
+    /// Return a set of built-in templates for initial app installs.
+  static Future<List<EmailTemplate>> getDefaultTemplates() async {
+    // clone to avoid external mutation
+    return defaultEmailTemplates
+        .map((t) => EmailTemplate(
+              templateId: t.templateId,
+              userId: t.userId,
+              templateName: t.templateName,
+              subject: t.subject,
+              body: t.body,
+              createdAt: t.createdAt,
+            ))
+        .toList();
+  }
+  
 }
