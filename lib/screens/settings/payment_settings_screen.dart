@@ -18,8 +18,28 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
 
   bool _chargeTaxes = false;
   double _taxPercentage = 0.0;
+   String _currency = 'USD';
+  String _region = 'US';
   String? _userId;
   bool _isSaving = false;
+
+  static const List<String> _currencies = [
+    'USD',
+    'EUR',
+    'GBP',
+    'JPY',
+    'AUD',
+    'CAD'
+  ];
+
+  static const List<String> _regions = [
+    'US',
+    'CA',
+    'GB',
+    'EU',
+    'JP',
+    'AU'
+  ];
 
   @override
   void initState() {
@@ -30,9 +50,11 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
   void _saveSettings() async {
     setState(() => _isSaving = true);
     final updatedSettings = UserTaxSettings(
-	  userId: _userId,
+      userId: _userId,
       chargeTaxes: _chargeTaxes,
       taxPercentage: _taxPercentage,
+	  currency: _currency,
+      region: _region,
     );
 
     final success = await _settingsService.updateUserTaxSettings(updatedSettings);
@@ -54,6 +76,8 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
       _chargeTaxes = settings.chargeTaxes;
       _taxPercentage = settings.taxPercentage;
       _userId = settings.userId;
+      _currency = settings.currency;
+      _region = settings.region;
     }
 
     return Column(
@@ -64,6 +88,29 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
           value: _chargeTaxes,
           onChanged: (value) => setState(() => _chargeTaxes = value),
         ),
+		        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: DropdownButtonFormField<String>(
+            value: _currency,
+            decoration: const InputDecoration(labelText: 'Currency'),
+            items: _currencies
+                .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                .toList(),
+            onChanged: (v) => setState(() => _currency = v ?? _currency),
+          ),
+        ),
+        if (_chargeTaxes)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: DropdownButtonFormField<String>(
+              value: _region,
+              decoration: const InputDecoration(labelText: 'Region'),
+              items: _regions
+                  .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                  .toList(),
+              onChanged: (v) => setState(() => _region = v ?? _region),
+            ),
+          ),
         if (_chargeTaxes)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
