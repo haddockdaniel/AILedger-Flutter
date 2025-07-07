@@ -175,11 +175,8 @@ class _TasksWidgetState extends State<TasksWidget> {
       case 'task.delete':
         final id = evt.data['taskId'];
         if (id != null) {
-          final match = _tasks.firstWhere(
-            (t) => t.taskId == id,
-            orElse: () => null,
-          );
-          if (match != null) _deleteTask(match);
+          final index = _tasks.indexWhere((t) => t.taskId == id);
+          if (index != -1) _deleteTask(_tasks[index]);
         }
         break;
     }
@@ -226,11 +223,9 @@ class _TasksWidgetState extends State<TasksWidget> {
                                     dueDate: t.dueDate,
                                     isCompleted: val ?? false,
                                     priority: t.priority,
-                                    description: t.description,
-                                    dueDate: t.dueDate,
-                                    priority: t.priority,
                                     customerId: t.customerId,
                                     autoReminders: t.autoReminders,
+                                    calendarEventId: t.calendarEventId,
                                   );
                                   await TaskService.updateTask(updated);
 								    if (val == true) {

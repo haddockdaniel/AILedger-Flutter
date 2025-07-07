@@ -6,6 +6,7 @@ import 'package:autoledger/services/customer_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/services/scheduler_service.dart';
+import 'package:autoledger/services/ai_insight_service.dart';
 
 class InvoiceDetail extends StatefulWidget {
   final int invoiceId;
@@ -20,6 +21,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
   Invoice? _invoice;
   Customer? _customer;
   bool _loading = true;
+  String? _aiSuggestion;
 
   @override
   void initState() {
@@ -32,7 +34,12 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
       final invoice = await InvoiceService.getInvoiceById(widget.invoiceId);
       final customer =
           await CustomerService.getCustomerById(invoice.customerId);
-
+      try {
+        final insights = await AIInsightService.getInsights();
+        _aiSuggestion = insights['invoices'] ?? insights['general'];
+      } catch (_) {
+        _aiSuggestion = null;
+      }
       setState(() {
         _invoice = invoice;
         _customer = customer;
@@ -170,7 +177,14 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
                 ],
               ),
             const SizedBox(height: 20),
-            // Placeholder for future AI insights
+            if (_aiSuggestion != null)
+              Card(
+                elevation: 2,
+                child: ListTile(
+                  title: const Text('AI Suggestion'),
+                  subtitle: Text(_aiSuggestion!),
+                ),
+              ),
           ],
         ),
       ),

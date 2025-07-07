@@ -5,6 +5,7 @@ import 'package:autoledger/services/customer_service.dart';
 import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';
+import 'package:autoledger/services/ai_insight_service.dart';
 
 class CustomerDetail extends StatefulWidget {
   final String customerId;
@@ -21,6 +22,8 @@ class _CustomerDetailState extends State<CustomerDetail> {
   List<Invoice> _unpaidInvoices = [];
 
   bool _loading = true;
+  double? _riskScore;
+  double? _cltv;
 
   @override
   void initState() {
@@ -33,7 +36,17 @@ class _CustomerDetailState extends State<CustomerDetail> {
       final customer = await CustomerService.getCustomerById(widget.customerId);
       final invoices =
           await InvoiceService.getInvoicesByCustomerId(widget.customerId);
-
+      try {
+        final risk = await AIInsightService.latePaymentRiskScores(
+            invoices: invoices, customers: [customer]);
+        final cltv = await AIInsightService.predictCustomerLifetimeValue(
+            invoices: invoices, customers: [customer]);
+        _riskScore = risk.isNotEmpty ? risk.first['score'] as double : null;
+        _cltv = cltv.isNotEmpty ? cltv.first['cltv'] as double : null;
+      } catch (_) {
+        _riskScore = null;
+        _cltv = null;
+      }
       setState(() {
         _customer = customer;
         _paidInvoices = invoices.where((inv) => inv.isPaid).toList();
@@ -106,7 +119,22 @@ class _CustomerDetailState extends State<CustomerDetail> {
           const SizedBox(height: 16),
           _buildInvoiceList(_paidInvoices, 'Paid Invoices'),
           const SizedBox(height: 16),
-          // Placeholder for future AI insights
+          if (_riskScore != null || _cltv != null)
+            Card(
+              elevation: 2,
+              child: ListTile(
+                title: const Text('AI Insights'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_riskScore != null)
+                      Text('Late Payment Risk: ${_riskScore!.toStringAsFixed(2)}%'),
+                    if (_cltv != null)
+                      Text('Predicted CLTV: $${_cltv!.toStringAsFixed(2)}'),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );

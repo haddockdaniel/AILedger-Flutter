@@ -31,14 +31,13 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
       applySearchFilter(query);
     });
     VoiceEventBus().onEvent('navigate_invoice_detail', (id) {
-      final match = invoices.firstWhere(
-        (i) => i.invoiceId.toString() == id.toString(),
-        orElse: () => null,
-      );
-      if (match != null) {
+      final index = invoices.indexWhere(
+          (i) => i.invoiceId.toString() == id.toString());
+      if (index != -1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => InvoiceDetail(invoiceId: match.invoiceId)),
+          MaterialPageRoute(
+              builder: (context) => InvoiceDetail(invoiceId: invoices[index].invoiceId)),
         );
       }
     });

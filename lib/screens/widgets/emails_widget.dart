@@ -125,9 +125,8 @@ class _EmailsWidgetState extends State<EmailsWidget> {
       case 'email.delete':
         final id = evt.data['emailId'];
         if (id != null) {
-          final match = _emails.firstWhere((e) => e.emailId == id,
-              orElse: () => null);
-          if (match != null) _deleteEmail(match);
+          final index = _emails.indexWhere((e) => e.emailId == id);
+          if (index != -1) _deleteEmail(_emails[index]);
         }
         break;
     }
@@ -251,10 +250,9 @@ class _EmailsWidgetState extends State<EmailsWidget> {
                           itemCount: _filtered.length,
                           itemBuilder: (_, i) {
                             final e = _filtered[i];
-                            final contact = _contacts.firstWhere(
-                              (c) => c.contactId == e.customerId,
-                              orElse: () => null,
-                            );
+                            final index =
+                                _contacts.indexWhere((c) => c.contactId == e.customerId);
+                            final contact = index != -1 ? _contacts[index] : null;
                             return ListTile(
                               title: Text(e.subject),
                               subtitle: Text(contact != null
