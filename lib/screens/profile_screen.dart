@@ -4,7 +4,10 @@ import 'package:autoledger/services/auth_service.dart';
 import 'package:autoledger/services/payment_service.dart';
 import 'package:autoledger/services/user_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import 'dart:typed_data';
 import '../widgets/skeleton_loader.dart';
+import '../widgets/logo_generator_dialog.dart';
+import '../services/logo_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -23,11 +26,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   bool _controllersInitialized = false;
+  Uint8List? _logoImage;
 
   @override
   void initState() {
     super.initState();
     _futureUser = UserService.fetchUserProfile();
+    _loadLogo();
+  }
+
+  Future<void> _loadLogo() async {
+    _logoImage = await LogoService.getLogo();
+    if (mounted) setState(() {});
   }
 
   @override
@@ -51,6 +61,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => _error = e.toString());
     } finally {
       setState(() => _updating = false);
+    }
+  }
+
+  Future<void> _showLogoGenerator() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (_) => const LogoGeneratorDialog(),
+    );
+    if (result == true) {
+      await _loadLogo();
     }
   }
 
@@ -149,6 +169,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: _updating
                         ? const SkeletonLoader(itemCount: 1, height: 48, margin: EdgeInsets.symmetric(vertical: 8))
                         : const Text('Save Profile'),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_logoImage != null)
+                    Column(
+                      children: [
+                        Image.memory(_logoImage!, height: 80),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ElevatedButton(
+                    onPressed: _showLogoGenerator,
+                    child: const Text('Use AI to create your logo'),
                   ),
                   const Divider(height: 32),
                   ElevatedButton(
