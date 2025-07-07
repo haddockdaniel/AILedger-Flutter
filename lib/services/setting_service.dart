@@ -8,14 +8,21 @@ class SettingsService {
 
   SettingsService({required this.baseUrl});
 
-  Future<UserTaxSettings?> fetchUserTaxSettings() async {
+  Future<Map<String, String>> _headers() async {
     final token = await SecureStorage.getToken();
+	    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      'Content-Type': 'application/json',
+    };
+  }
+
+  Future<UserTaxSettings?> fetchUserTaxSettings() async {
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$baseUrl/api/settings/tax'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -26,13 +33,10 @@ class SettingsService {
   }
 
   Future<bool> updateUserTaxSettings(UserTaxSettings settings) async {
-    final token = await SecureStorage.getToken();
+    final headers = await _headers();
     final response = await http.put(
       Uri.parse('$baseUrl/api/settings/tax'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: json.encode(settings.toJson()),
     );
 

@@ -12,11 +12,21 @@ class EmailTemplateService {
     return await SecureStorage.getToken();
   }
 
-  static Future<List<EmailTemplate>> getTemplates() async {
+  static Future<Map<String, String>> _headers({bool isJson = true}) async {
     final token = await _getAuthToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      if (isJson) 'Content-Type': 'application/json',
+    };
+  }
+
+  static Future<List<EmailTemplate>> getTemplates() async {
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse(baseUrl),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -28,10 +38,10 @@ class EmailTemplateService {
   }
 
   static Future<EmailTemplate> getTemplateById(String templateId) async {
-    final token = await _getAuthToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$baseUrl/$templateId'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -42,13 +52,10 @@ class EmailTemplateService {
   }
 
   static Future<bool> createTemplate(EmailTemplate template) async {
-    final token = await _getAuthToken();
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse(baseUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(template.toJson()),
     );
 
@@ -56,13 +63,10 @@ class EmailTemplateService {
   }
 
   static Future<bool> updateTemplate(String templateId, EmailTemplate template) async {
-    final token = await _getAuthToken();
+     final headers = await _headers();
     final response = await http.put(
       Uri.parse('$baseUrl/$templateId'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(template.toJson()),
     );
 
@@ -70,10 +74,10 @@ class EmailTemplateService {
   }
 
   static Future<bool> deleteTemplate(String templateId) async {
-    final token = await _getAuthToken();
+    final headers = await _headers(isJson: false);
     final response = await http.delete(
       Uri.parse('$baseUrl/$templateId'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     return response.statusCode == 200;

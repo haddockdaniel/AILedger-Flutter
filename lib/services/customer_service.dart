@@ -7,10 +7,15 @@ import '../utils/secure_storage.dart';
 class CustomerService {
   static String get _baseUrl => '$apiBaseUrl/api/customers';
 
-  static Future<Map<String, String>> _headers() async => {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await SecureStorage.getToken()}',
-      };
+  static Future<Map<String, String>> _headers() async {
+    final token = await SecureStorage.getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+    };
+  }
 
   static Future<List<Customer>> fetchCustomers() async {
     final res = await http.get(Uri.parse(_baseUrl), headers: await _headers());

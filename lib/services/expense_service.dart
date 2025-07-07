@@ -13,8 +13,18 @@ class ExpenseService {
     return await SecureStorage.getToken();
   }
 
-  static Future<List<Expense>> getExpenses({String? vendor, DateTime? startDate, DateTime? endDate}) async {
+  static Future<Map<String, String>> _headers({bool isJson = true}) async {
     final token = await _getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      if (isJson) 'Content-Type': 'application/json',
+    };
+  }
+
+  static Future<List<Expense>> getExpenses({String? vendor, DateTime? startDate, DateTime? endDate}) async {
+    final headers = await _headers();
     Map<String, String> queryParams = {};
     if (vendor != null) queryParams['vendor'] = vendor;
     if (startDate != null) queryParams['startDate'] = startDate.toIso8601String();
@@ -23,7 +33,7 @@ class ExpenseService {
     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
     final response = await http.get(
       uri,
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
@@ -34,10 +44,10 @@ class ExpenseService {
   }
 
   static Future<Expense> getExpenseById(String id) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$baseUrl/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       return Expense.fromJson(jsonDecode(response.body));
@@ -47,13 +57,10 @@ class ExpenseService {
   }
 
   static Future<void> createExpense(Expense expense) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse(baseUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(expense.toJson()),
     );
     if (response.statusCode != 201) {
@@ -63,9 +70,11 @@ class ExpenseService {
 
   static Future<void> createExpenseWithImage(Expense expense, File imageFile) async {
     final token = await _getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/with-image'))
       ..headers['Authorization'] = 'Bearer $token'
       ..fields['data'] = jsonEncode(expense.toJson())
+      ..headers.addAll({if (tenantId.isNotEmpty) tenantHeaderKey: tenantId})
       ..files.add(await http.MultipartFile.fromPath('image', imageFile.path, contentType: MediaType('image', 'jpeg')));
 
     final response = await request.send();
@@ -75,13 +84,10 @@ class ExpenseService {
   }
 
   static Future<void> updateExpense(String id, Expense expense) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(expense.toJson()),
     );
     if (response.statusCode != 200) {
@@ -90,24 +96,21 @@ class ExpenseService {
   }
 
   static Future<void> deleteExpense(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.delete(
       Uri.parse('$baseUrl/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to delete expense');
     }
   }
   
-    static Future<void> attachReceipt(String id, String url) async {
-    final token = await _getToken();
+  static Future<void> attachReceipt(String id, String url) async {
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse('$baseUrl/$id/receipt'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode({'url': url}),
     );
     if (response.statusCode != 200) {

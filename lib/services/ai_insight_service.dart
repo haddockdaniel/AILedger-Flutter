@@ -19,15 +19,22 @@ import 'dart:math';
 class AIInsightService {
   static String get _baseUrl => '$apiBaseUrl/api/ai';
 
-  static Future<List<AIInsight>> fetchInsights(String module) async {
+  static Future<Map<String, String>> _headers({bool isJson = true}) async {
     final token = await SecureStorage.getToken();
+
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      if (isJson) 'Content-Type': 'application/json',
+    };
+  }
+  static Future<List<AIInsight>> fetchInsights(String module) async {
+    final headers = await _headers();
 
     final response = await http.get(
       Uri.parse('$_baseUrl/insights?module=$module'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -39,14 +46,11 @@ class AIInsightService {
   }
 
   static Future<String> fetchNaturalLanguageResponse(String query) async {
-    final token = await SecureStorage.getToken();
+    final headers = await _headers();
 
     final response = await http.post(
       Uri.parse('$_baseUrl/nlp'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode({'query': query}),
     );
 

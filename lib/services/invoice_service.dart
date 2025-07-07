@@ -9,11 +9,21 @@ class InvoiceService {
     return await SecureStorage.getToken();
   }
 
-  static Future<List<Invoice>> getInvoices() async {
+  static Future<Map<String, String>> _headers({bool isJson = true}) async {
     final token = await _getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      if (isJson) 'Content-Type': 'application/json',
+    };
+  }
+
+  static Future<List<Invoice>> getInvoices() async {
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$apiBaseUrl/api/invoices'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
@@ -24,10 +34,10 @@ class InvoiceService {
   }
 
   static Future<Invoice> getInvoiceById(String id) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$apiBaseUrl/api/invoices/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       return Invoice.fromJson(jsonDecode(response.body));
@@ -36,12 +46,12 @@ class InvoiceService {
     }
   }
   
-    static Future<List<Invoice>> getInvoicesByCustomerId(
+  static Future<List<Invoice>> getInvoicesByCustomerId(
       String customerId) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$apiBaseUrl/api/invoices?customerId=$customerId'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       final list = jsonDecode(response.body) as List<dynamic>;
@@ -52,13 +62,10 @@ class InvoiceService {
   }
 
   static Future<Invoice> createInvoice(Invoice invoice) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(invoice.toJson()),
     );
     if (response.statusCode == 201) {
@@ -69,13 +76,10 @@ class InvoiceService {
   }
 
   static Future<void> updateInvoice(Invoice invoice) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.put(
       Uri.parse('$apiBaseUrl/api/invoices/${invoice.invoiceId}'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(invoice.toJson()),
     );
     if (response.statusCode != 200) {
@@ -84,10 +88,10 @@ class InvoiceService {
   }
 
   static Future<void> deleteInvoice(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.delete(
       Uri.parse('$apiBaseUrl/api/invoices/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 204) {
       throw Exception('Failed to delete invoice');
@@ -95,10 +99,10 @@ class InvoiceService {
   }
 
   static Future<void> cancelInvoice(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices/$id/cancel'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to cancel invoice');
@@ -106,10 +110,10 @@ class InvoiceService {
   }
 
   static Future<void> writeOffInvoice(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices/$id/writeoff'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to write off invoice');
@@ -117,13 +121,10 @@ class InvoiceService {
   }
 
   static Future<void> discountInvoice(String id, double discount) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices/$id/discount'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode({'discount': discount}),
     );
     if (response.statusCode != 200) {
@@ -132,10 +133,10 @@ class InvoiceService {
   }
 
   static Future<void> regenerateInvoicePdf(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices/$id/regenerate'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to regenerate invoice PDF');
@@ -143,10 +144,10 @@ class InvoiceService {
   }
 
   static Future<void> sendInvoice(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices/$id/send'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to send invoice');
@@ -154,10 +155,10 @@ class InvoiceService {
   }
   
   static Future<void> sendPastDueReminder(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/invoices/$id/reminder'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to send reminder');

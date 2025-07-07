@@ -16,15 +16,22 @@ class UserService {
   static String get _baseUrl => '$apiBaseUrl/api/user';
   static const String _emailExistsPath = 'email-exists';
   
-  static Future<User> fetchUserProfile() async {
+    static Future<Map<String, String>> _headers() async {
     final token = await SecureStorage.getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      'Content-Type': 'application/json',
+    };
+  }
+  
+  static Future<User> fetchUserProfile() async {
+    final headers = await _headers();
 
     final response = await http.get(
       Uri.parse('$_baseUrl/profile'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -38,13 +45,10 @@ class UserService {
     /// Returns `true` if an account with [email] already exists in the
   /// system. Throws an [Exception] if the check cannot be performed.
   static Future<bool> emailExists(String email) async {
-    final token = await SecureStorage.getToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$_baseUrl/$_emailExistsPath?email=$email'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -54,14 +58,11 @@ class UserService {
   }
 
   static Future<void> updateUserProfile(User updatedUser) async {
-    final token = await SecureStorage.getToken();
+    final headers = await _headers();
 
     final response = await http.put(
       Uri.parse('$_baseUrl/profile'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(updatedUser.toJson()),
     );
 

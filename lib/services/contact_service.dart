@@ -10,8 +10,10 @@ class ContactService {
 
   static Future<Map<String, String>> _getHeaders({bool isJson = true}) async {
     final token = await _getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
     return {
       'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
       if (isJson) 'Content-Type': 'application/json',
     };
   }

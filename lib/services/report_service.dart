@@ -10,6 +10,16 @@ class ReportService {
   static Future<String?> _getToken() async {
     return await SecureStorage.getToken();
   }
+  
+    static Future<Map<String, String>> _headers({bool isJson = true}) async {
+    final token = await _getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      if (isJson) 'Content-Type': 'application/json',
+    };
+  }
 
   static Future<http.Response> getReport({
     required String reportType,
@@ -19,7 +29,7 @@ class ReportService {
     String? vendor,
     String format = 'json', // options: json, pdf, xlsx
   }) async {
-    final token = await _getToken();
+    final headers = await _headers();
 
     final queryParameters = <String, String>{
       'format': format,
@@ -33,7 +43,7 @@ class ReportService {
 
     final response = await http.get(
       uri,
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -77,10 +87,7 @@ class ReportService {
 
     final response = await http.post(
       Uri.parse('$baseUrl/export/pdf'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode({'content': content}),
     );
 

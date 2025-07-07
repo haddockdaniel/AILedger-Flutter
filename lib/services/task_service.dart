@@ -9,11 +9,21 @@ class TaskService {
     return await SecureStorage.getToken();
   }
 
-  static Future<List<Task>> getTasks() async {
+  static Future<Map<String, String>> _headers({bool isJson = true}) async {
     final token = await _getToken();
+    final tenantId = await SecureStorage.getTenantId() ?? defaultTenantId;
+    return {
+      'Authorization': 'Bearer $token',
+      if (tenantId.isNotEmpty) tenantHeaderKey: tenantId,
+      if (isJson) 'Content-Type': 'application/json',
+    };
+  }
+
+  static Future<List<Task>> getTasks() async {
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$apiBaseUrl/api/tasks'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
@@ -24,10 +34,10 @@ class TaskService {
   }
 
   static Future<Task> getTaskById(String id) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$apiBaseUrl/api/tasks/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       return Task.fromJson(jsonDecode(response.body));
@@ -37,13 +47,10 @@ class TaskService {
   }
 
   static Future<Task> createTask(Task task) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/tasks'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(task.toJson()),
     );
     if (response.statusCode == 201) {
@@ -54,13 +61,10 @@ class TaskService {
   }
 
   static Future<void> updateTask(Task task) async {
-    final token = await _getToken();
+    final headers = await _headers();
     final response = await http.put(
       Uri.parse('$apiBaseUrl/api/tasks/${task.taskId}'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(task.toJson()),
     );
     if (response.statusCode != 200) {
@@ -69,10 +73,10 @@ class TaskService {
   }
 
   static Future<void> deleteTask(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.delete(
       Uri.parse('$apiBaseUrl/api/tasks/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 204) {
       throw Exception('Failed to delete task');
@@ -80,10 +84,10 @@ class TaskService {
   }
 
   static Future<void> markTaskComplete(String id) async {
-    final token = await _getToken();
+    final headers = await _headers(isJson: false);
     final response = await http.post(
       Uri.parse('$apiBaseUrl/api/tasks/$id/complete'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to mark task as complete');

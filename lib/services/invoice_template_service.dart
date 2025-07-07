@@ -13,10 +13,10 @@ class InvoiceTemplateService {
   }
 
   static Future<List<InvoiceTemplate>> getTemplates() async {
-    final token = await _getAuthToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse(baseUrl),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -28,10 +28,10 @@ class InvoiceTemplateService {
   }
 
   static Future<InvoiceTemplate> getTemplateById(String templateId) async {
-    final token = await _getAuthToken();
+    final headers = await _headers();
     final response = await http.get(
       Uri.parse('$baseUrl/$templateId'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
@@ -42,13 +42,10 @@ class InvoiceTemplateService {
   }
 
   static Future<bool> createTemplate(InvoiceTemplate template) async {
-    final token = await _getAuthToken();
+    final headers = await _headers();
     final response = await http.post(
       Uri.parse(baseUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(template.toJson()),
     );
 
@@ -56,13 +53,10 @@ class InvoiceTemplateService {
   }
 
   static Future<bool> updateTemplate(String templateId, InvoiceTemplate template) async {
-    final token = await _getAuthToken();
+    final headers = await _headers();
     final response = await http.put(
       Uri.parse('$baseUrl/$templateId'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(template.toJson()),
     );
 
@@ -70,10 +64,10 @@ class InvoiceTemplateService {
   }
 
   static Future<bool> deleteTemplate(String templateId) async {
-    final token = await _getAuthToken();
+    final headers = await _headers(isJson: false);
     final response = await http.delete(
       Uri.parse('$baseUrl/$templateId'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: headers,
     );
 
     return response.statusCode == 200;
