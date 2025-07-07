@@ -1,10 +1,8 @@
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/screens/dashboard/dashboard_screen.dart';
-import 'package:autoledger/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:autoledger/utils/constants.dart';
+import 'package:provider/provider.dart';
+import '../../providers/session_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,54 +15,23 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _tenantController = TextEditingController();
-  
-  bool _isLoading = false;
-  String? _errorMessage;
 
   Future<void> _login() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final tenant = _tenantController.text.trim();
 	
-    try {
-      final response = await http.post(
-        Uri.parse('$apiBaseUrl/api/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password, 'tenantId': tenant}),
-      );
+    final success = await context.read<SessionProvider>().login(
+      email,
+      password,
+      tenantId: tenant,
+    );
 
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        final token = json['token'];
-        final refreshToken = json['refreshToken'];
-        await SecureStorage.saveToken(token);
-        await SecureStorage.saveRefreshToken(refreshToken);
-        if (tenant.isNotEmpty) {
-          await SecureStorage.saveTenantId(tenant);
-        }
-		
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
-        );
-      } else {
-        final body = jsonDecode(response.body);
-        setState(() {
-          _errorMessage = body['message'] ?? 'Login failed';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'An error occurred. Please try again.';
-      });
-    } finally {
-      setState(() => _isLoading = false);
+    if (success && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
     }
   }
 
@@ -104,22 +71,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
               ),
               const SizedBox(height: 24),
-              if (_errorMessage != null)
-                Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              const SizedBox(height: 12),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        minimumSize: const Size.fromHeight(48),
-                      ),
-                      child: const Text('Login'),
-                    ),
+              Consumer<SessionProvider>(
+                builder: (_, session, __) {
+                  return Column(
+                    children: [
+                      if (session.errorMessage != null)
+                        Text(
+                          session.errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      const SizedBox(height: 12),
+                      session.isLoading
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: _login,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryColor,
+                                minimumSize: const Size.fromHeight(48),
+                              ),
+                              child: const Text('Login'),
+                            ),
+                    ],
+                  );
+                },
+              ),
 			  const SizedBox(height: 12),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/signup'),

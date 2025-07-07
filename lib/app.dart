@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/screens/auth/login_screen.dart';
@@ -21,6 +22,8 @@ import 'package:autoledger/screens/widgets/contacts_screen.dart';
 // New imports for voice overlay
 import 'package:autoledger/widgets/voice_slot_overlay.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:provider/provider.dart';
+import 'providers/session_provider.dart';
 
 class AutoLedgerApp extends StatefulWidget {
   const AutoLedgerApp({Key? key}) : super(key: key);
@@ -60,14 +63,18 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        MaterialApp(
-          title: 'AutoLedger',
-          theme: AppTheme.lightTheme,
-          initialRoute: '/login',
-          routes: {
-            '/login':          (_) => const LoginScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SessionProvider()),
+      ],
+      child: Stack(
+        children: [
+          MaterialApp(
+            title: 'AutoLedger',
+            theme: AppTheme.lightTheme,
+            initialRoute: '/login',
+            routes: {
+              '/login':          (_) => const LoginScreen(),
             '/reset-password': (_) => const ResetPasswordScreen(),
             '/dashboard':      (_) => const DashboardScreen(),
             '/customers':      (_) => const CustomersScreen(),
@@ -95,6 +102,6 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
         // Overlay the live voice-slot chips on top of everything
         VoiceSlotOverlay(slots: _currentSlots),
       ],
-    );
+    ));
   }
 }
