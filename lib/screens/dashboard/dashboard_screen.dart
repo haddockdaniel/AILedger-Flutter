@@ -13,6 +13,7 @@ import 'package:autoledger/screens/widgets/reports_widget.dart';
 import 'package:autoledger/screens/widgets/ai_insights_widget.dart';
 import 'package:autoledger/screens/settings/payment_settings_screen.dart';
 import 'package:autoledger/screens/widgets/customer_detail.dart';
+import 'package:autoledger/screens/profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String initialRoute;

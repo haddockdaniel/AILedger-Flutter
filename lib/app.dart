@@ -16,6 +16,7 @@ import 'package:autoledger/screens/widgets/contact_detail_screen.dart';
 import 'package:autoledger/screens/auth/signup_screen.dart';
 import 'package:autoledger/screens/auth/subscription_screen.dart';
 import 'package:autoledger/screens/profile_screen.dart';
+import 'package:autoledger/screens/widgets/contacts_screen.dart';
 
 // New imports for voice overlay
 import 'package:autoledger/widgets/voice_slot_overlay.dart';
@@ -75,9 +76,9 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
             '/emails':         (_) => const EmailsWidget(),
             '/expenses':       (_) => const ExpensesWidget(),
             '/reports':        (_) => const ReportsWidget(),
-            '/insights':       (_) => const AiInsightsWidget(),
+            '/insights':       (_) => const AIInsightsWidget(),
             '/settings':       (_) => const PaymentSettingsScreen(),
-            '/contacts':       (_) => const CustomersScreen(),
+            '/contacts':       (_) => const ContactsScreen(),
             '/signup':         (_) => const SignUpScreen(),
             '/subscription':   (_) => const SubscriptionScreen(),
             '/profile':        (_) => const ProfileScreen(),
@@ -86,8 +87,8 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
               return ContactDetailScreen(contactId: id);
             },
             '/invoice/detail': (ctx) {
-              final invoice = ModalRoute.of(ctx)!.settings.arguments as Invoice;
-              return InvoiceDetail(invoice: invoice);
+              final id = ModalRoute.of(ctx)!.settings.arguments as int;
+              return InvoiceDetail(invoiceId: id);
             },
           },
         ),

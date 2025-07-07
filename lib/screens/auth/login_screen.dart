@@ -16,7 +16,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final TextEditingController _tenantController = TextEditingController();
+  
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -28,12 +29,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-
+    final tenant = _tenantController.text.trim();
+	
     try {
       final response = await http.post(
         Uri.parse('$apiBaseUrl/api/auth/login'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'email': email, 'password': password, 'tenantId': tenant}),
       );
 
       if (response.statusCode == 200) {
@@ -42,7 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
         final refreshToken = json['refreshToken'];
         await SecureStorage.saveToken(token);
         await SecureStorage.saveRefreshToken(refreshToken);
-
+        if (tenant.isNotEmpty) {
+          await SecureStorage.saveTenantId(tenant);
+        }
+		
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
@@ -86,6 +91,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 12),
+			                TextField(
+                controller: _tenantController,
+                decoration: const InputDecoration(labelText: 'Tenant ID'),
               ),
               const SizedBox(height: 12),
               TextField(

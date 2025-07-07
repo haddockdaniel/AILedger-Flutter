@@ -13,17 +13,18 @@ void main() {
         final body = jsonDecode(request.body) as Map;
         expect(body['email'], 'test@example.com');
         expect(body['password'], 'password');
+		expect(body['tenantId'], 't1');
         return http.Response(jsonEncode({'userId': 'u123'}), 201);
       });
 
-      final userId = await AuthService.signUp('test@example.com', 'password', client: client);
+      final userId = await AuthService.signUp('test@example.com', 'password', tenantId: 't1', client: client);
       expect(userId, 'u123');
     });
 
     test('throws exception on failure', () async {
       final client = MockClient((_) async => http.Response('bad', 400));
       expect(
-        () => AuthService.signUp('a@b.com', 'pass', client: client),
+        () => AuthService.signUp('a@b.com', 'pass', tenantId: '', client: client),
         throwsA(isA<Exception>()),
       );
     });

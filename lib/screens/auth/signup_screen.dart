@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:autoledger/services/auth_service.dart';
 import 'package:autoledger/services/payment_service.dart';
 import 'package:autoledger/utils/constants.dart';
+import 'package:autoledger/utils/secure_storage.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,7 +12,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _email = '', _password = '';
+  String _email = '', _password = '', _tenantId = '';
   bool _loading = false;
   String? _error;
 
@@ -20,7 +21,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() { _loading = true; _error = null; });
     try {
       // 1) create user
-      final userId = await AuthService.signUp(_email.trim(), _password);
+      final userId = await AuthService.signUp(_email.trim(), _password, tenantId: _tenantId);
+      if (_tenantId.isNotEmpty) {
+        await SecureStorage.saveTenantId(_tenantId);
+      }
       // 2) create subscription and get approval URL
       final approvalUrl = await PaymentService.createSubscription(
         planId: '19usd_monthly',
@@ -52,6 +56,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onChanged: (v) => _email = v,
               validator: (v) =>
                   v != null && v.contains('@') ? null : 'Enter valid email',
+            ),
+			TextFormField(
+              decoration: const InputDecoration(labelText: 'Tenant ID'),
+              onChanged: (v) => _tenantId = v,
             ),
             TextFormField(
               decoration: const InputDecoration(labelText: 'Password'),

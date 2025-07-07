@@ -61,12 +61,12 @@ class AuthService {
  /// Public wrapper used by [SessionManager] to refresh tokens periodically.
   static Future<bool> refresh({http.Client? client}) => refreshToken(client: client);
 
-static Future<String> signUp(String email, String password, {http.Client? client}) async {
+static Future<String> signUp(String email, String password,{String tenantId = '', http.Client? client}) async {
   final httpClient = client ?? http.Client();
   final res = await httpClient.post(
     Uri.parse('$apiBaseUrl/api/auth/signup'),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({ 'email': email, 'password': password }),
+    body: jsonEncode({ 'email': email, 'password': password, 'tenantId': tenantId }),
   );
   if (res.statusCode == 201) {
     final data = jsonDecode(res.body);

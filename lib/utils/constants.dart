@@ -21,6 +21,13 @@ const String voiceIntentUrl = String.fromEnvironment(
 const String voiceApiKey =
     String.fromEnvironment('VOICE_API_KEY', defaultValue: '');
 
+/// Tenant identifier used for multi-tenant API requests.
+/// Can be provided via `--dart-define=TENANT_ID=mytenant` at build time.
+const String defaultTenantId =
+    String.fromEnvironment('TENANT_ID', defaultValue: '');
+
+/// Header key for passing the tenant id to the backend API.
+const String tenantHeaderKey = 'X-Tenant-ID';
 
 class SessionManager {
   static final _authService = AuthService();

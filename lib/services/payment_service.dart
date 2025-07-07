@@ -12,8 +12,18 @@ class PaymentService {
     final res = await http.post(
       Uri.parse('$apiBaseUrl/api/payments/create-subscription'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({ 'planId': planId, 'returnUrl': returnUrl, 'cancelUrl': cancelUrl, 'userId': userId }),
+      body: jsonEncode({
+        'planId': planId,
+        'returnUrl': returnUrl,
+        'cancelUrl': cancelUrl,
+        'userId': userId,
+      }),
     );
+	
+	    if (res.statusCode != 200 && res.statusCode != 201) {
+      throw Exception('Failed to create subscription (${res.statusCode})');
+    }
+	
     final data = jsonDecode(res.body);
     return data['approvalUrl'];
   }

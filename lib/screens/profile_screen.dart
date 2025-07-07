@@ -103,23 +103,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: _updating
                         ? null
                         : () async {
-                            setState(() => _updating = true);
-                            final updatedUser = User(
-                              id: user.id,
-                              name: _nameController.text.trim(),
-                              companyName: _companyController.text.trim().isEmpty
-                                  ? null
-                                  : _companyController.text.trim(),
-                              email: _emailController.text.trim(),
-                              phone: _phoneController.text.trim().isEmpty
-                                  ? null
-                                  : _phoneController.text.trim(),
-                              address: _addressController.text.trim().isEmpty
-                                  ? null
-                                  : _addressController.text.trim(),
-                            );
-                            await UserService.updateUserProfile(updatedUser);
-                            setState(() => _updating = false);
+                            setState(() { _updating = true; _error = null; });
+                            try {
+                              final newEmail = _emailController.text.trim();
+                              if (newEmail != user.email) {
+                                final exists = await UserService.emailExists(newEmail);
+                                if (exists) {
+                                  setState(() {
+                                    _error = 'This email already exists. Please use a different email or cancel.';
+                                    _updating = false;
+                                  });
+                                  return;
+                                }
+                              }
+
+                              final updatedUser = User(
+                                id: user.id,
+                                name: _nameController.text.trim(),
+                                companyName: _companyController.text.trim().isEmpty
+                                    ? null
+                                    : _companyController.text.trim(),
+                                email: newEmail,
+                                phone: _phoneController.text.trim().isEmpty
+                                    ? null
+                                    : _phoneController.text.trim(),
+                                address: _addressController.text.trim().isEmpty
+                                    ? null
+                                    : _addressController.text.trim(),
+                              );
+                              await UserService.updateUserProfile(updatedUser);
+                              setState(() { _error = null; });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Profile updated')),
+                              );
+                            } on EmailAlreadyExistsException {
+                              setState(() => _error = 'This email already exists. Please use a different email or cancel.');
+                            } catch (e) {
+                              setState(() => _error = e.toString());
+                            } finally {
+                              setState(() => _updating = false);
+                            }
                           },
                     child: _updating
                         ? const CircularProgressIndicator()
