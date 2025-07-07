@@ -18,6 +18,7 @@ import 'package:autoledger/screens/auth/signup_screen.dart';
 import 'package:autoledger/screens/auth/subscription_screen.dart';
 import 'package:autoledger/screens/profile_screen.dart';
 import 'package:autoledger/screens/widgets/contacts_screen.dart';
+import 'package:autoledger/screens/widgets/receipt_scanner.dart';
 
 // New imports for voice overlay
 import 'package:autoledger/widgets/voice_slot_overlay.dart';
@@ -86,6 +87,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
             '/insights':       (_) => const AIInsightsWidget(),
             '/settings':       (_) => const PaymentSettingsScreen(),
             '/contacts':       (_) => const ContactsScreen(),
+			'/receipt-scan':  (_) => const ReceiptScannerScreen(),
             '/signup':         (_) => const SignUpScreen(),
             '/subscription':   (_) => const SubscriptionScreen(),
             '/profile':        (_) => const ProfileScreen(),

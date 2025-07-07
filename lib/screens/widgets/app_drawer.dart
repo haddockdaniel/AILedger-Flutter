@@ -67,6 +67,12 @@ class AppDrawer extends StatelessWidget {
             label: 'Expenses',
             route: '/expenses',
           ),
+		    _buildNavTile(
+            context,
+            icon: Icons.camera_alt,
+            label: 'Scan Receipt',
+            route: '/receipt-scan',
+          ),
           _buildNavTile(
             context,
             icon: Icons.bar_chart,

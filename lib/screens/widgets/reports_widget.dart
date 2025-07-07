@@ -29,7 +29,8 @@ class _ReportsWidgetState extends State<ReportsWidget> {
     "Customer",
     "Invoice Aging",
     "Expense",
-    "Cash Flow"
+    "Cash Flow",
+    "Expense by Vendor"
   ];
 
   @override
@@ -46,6 +47,7 @@ class _ReportsWidgetState extends State<ReportsWidget> {
 
   Future<void> _loadReport() async {
     setState(() => isLoading = true);
+	if (selectedReport != 'Expense by Vendor') vendor = null;
     final content = await ReportService.generateReport(
       reportType: selectedReport,
       from: startDate,
@@ -116,6 +118,17 @@ class _ReportsWidgetState extends State<ReportsWidget> {
     return Column(
       children: [
         buildDropdown(),
+		  if (selectedReport == 'Expense by Vendor')
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: TextField(
+              decoration: const InputDecoration(labelText: 'Vendor'),
+              onChanged: (val) {
+                vendor = val.isEmpty ? null : val;
+                _loadReport();
+              },
+            ),
+          ),
         SizedBox(height: 8),
         Row(
           children: [
