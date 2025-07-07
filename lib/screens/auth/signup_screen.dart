@@ -4,6 +4,7 @@ import 'package:autoledger/services/payment_service.dart';
 import 'package:autoledger/utils/constants.dart';
 import 'package:autoledger/utils/secure_storage.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import '../../widgets/skeleton_loader.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -84,7 +85,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   minimumSize: const Size.fromHeight(48),
                 ),
                 child: _loading
-                    ? const CircularProgressIndicator()
+                    ? const SkeletonLoader(itemCount: 2, height: 48, margin: EdgeInsets.symmetric(vertical: 8))
                     : const Text('Continue to Payment'),
               ),
             ),

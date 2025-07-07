@@ -3,6 +3,7 @@ import 'package:autoledger/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/session_provider.dart';
+import '../../widgets/skeleton_loader.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       const SizedBox(height: 12),
                       session.isLoading
-                          ? const CircularProgressIndicator()
+                          ? const SkeletonLoader(itemCount: 4, height: 48, margin: EdgeInsets.symmetric(vertical: 8))
                           : SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(

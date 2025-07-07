@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/utils/constants.dart';
 import '../widgets/error_snackbar.dart';
+import '../../widgets/skeleton_loader.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);
@@ -82,11 +83,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: ElevatedButton(
                 onPressed: isLoading ? null : sendResetLink,
                 child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
+                    ? const SkeletonLoader(itemCount: 1, height: 48, margin: EdgeInsets.symmetric(vertical: 8))
                     : const Text('Send Reset Link'),
               ),
             ),

@@ -5,7 +5,7 @@ import '../../models/expense_model.dart';
 import '../../services/receipt_parser.dart';
 import '../../services/s3_service.dart';
 import '../../services/expense_service.dart';
-import '../../widgets/loading_indicator.dart';
+import '../../widgets/skeleton_loader.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
   final Expense? editExpense;
@@ -118,7 +118,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.editExpense == null ? 'New Expense' : 'Edit Expense')),
       body: _loading
-          ? const LoadingIndicator()
+          ? const SkeletonLoader(itemCount: 6)
           : Padding(
               padding: const EdgeInsets.all(16),
               child: Form(

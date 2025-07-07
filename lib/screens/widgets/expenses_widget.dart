@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:autoledger/models/expense_model.dart';
 import 'package:autoledger/services/expense_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/utils/voice_assistant.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'expense_form_screen.dart';
@@ -125,7 +126,7 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
 
   Widget buildExpenseList() {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: SkeletonLoader());
     }
 
     // Wrap both empty and non-empty lists in a RefreshIndicator

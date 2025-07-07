@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:autoledger/models/user_tax_settings_model.dart';
 import 'package:autoledger/services/setting_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import '../widgets/skeleton_loader.dart';
 
 class PaymentSettingsScreen extends StatefulWidget {
   const PaymentSettingsScreen({Key? key}) : super(key: key);
@@ -80,7 +81,7 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
         ElevatedButton(
           onPressed: _isSaving ? null : _saveSettings,
           child: _isSaving
-              ? const CircularProgressIndicator()
+              ? const SkeletonLoader(itemCount: 1, height: 48, margin: EdgeInsets.symmetric(vertical: 8))
               : const Text('Save Settings'),
         ),
       ],
@@ -99,7 +100,7 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
           future: _futureSettings,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: SkeletonLoader());
             } else if (snapshot.hasError) {
               return const Center(child: Text('Failed to load settings.'));
             } else {

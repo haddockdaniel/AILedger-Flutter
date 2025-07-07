@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:autoledger/services/ai_insight_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/widgets/skeleton_loader.dart';
 
 class AIInsightsWidget extends StatefulWidget {
   const AIInsightsWidget({Key? key}) : super(key: key);
@@ -70,7 +71,7 @@ class _AIInsightsWidgetState extends State<AIInsightsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_loading) return const Center(child: SkeletonLoader(itemCount: 4));
 
     if (_insights == null || _insights!.isEmpty) {
       return const Center(child: Text("No AI insights available."));

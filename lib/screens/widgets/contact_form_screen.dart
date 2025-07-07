@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
-import 'package:autoledger/widgets/loading_indicator.dart';
+import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/utils/voice_events.dart';
 
@@ -85,7 +85,7 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
         title: Text(isEditing ? 'Edit Contact' : 'New Contact'),
       ),
       body: _loading
-          ? const LoadingIndicator()
+          ? const SkeletonLoader(itemCount: 6)
           : Padding(
               padding: const EdgeInsets.all(16),
               child: Form(

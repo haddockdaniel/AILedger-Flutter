@@ -4,6 +4,7 @@ import 'package:autoledger/services/auth_service.dart';
 import 'package:autoledger/services/payment_service.dart';
 import 'package:autoledger/services/user_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import '../widgets/skeleton_loader.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -61,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         future: _futureUser,
         builder: (ctx, snap) {
           if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: SkeletonLoader());
           }
           final user = snap.data!;
 		            if (!_controllersInitialized) {
@@ -146,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }
                           },
                     child: _updating
-                        ? const CircularProgressIndicator()
+                        ? const SkeletonLoader(itemCount: 1, height: 48, margin: EdgeInsets.symmetric(vertical: 8))
                         : const Text('Save Profile'),
                   ),
                   const Divider(height: 32),

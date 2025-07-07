@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/services/contact_service.dart';
 import 'package:autoledger/screens/widgets/contact_form_screen.dart';
-import 'package:autoledger/widgets/loading_indicator.dart';
+import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/widgets/confirmation_dialog.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/utils/voice_events.dart';
@@ -81,7 +81,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: LoadingIndicator());
+    if (_loading) return const Center(child: SkeletonLoader(itemCount: 3));
     if (_contact == null) return const Center(child: Text('Contact not found.'));
     return Scaffold(
       appBar: AppBar(

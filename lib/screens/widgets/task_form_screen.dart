@@ -3,7 +3,7 @@ import 'package:autoledger/models/task_model.dart';
 import 'package:autoledger/models/contact_model.dart';
 import 'package:autoledger/services/task_service.dart';
 import 'package:autoledger/services/contact_service.dart';
-import 'package:autoledger/widgets/loading_indicator.dart';
+import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/theme/app_theme.dart';
 
 class TaskFormScreen extends StatefulWidget {
@@ -92,7 +92,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         title: Text(isEdit ? 'Edit Task' : 'New Task'),
       ),
       body: _loading
-          ? const LoadingIndicator()
+          ? const SkeletonLoader(itemCount: 6)
           : Padding(
               padding: const EdgeInsets.all(16),
               child: Form(

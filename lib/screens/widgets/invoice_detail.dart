@@ -4,6 +4,7 @@ import 'package:autoledger/models/customer_model.dart';
 import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/services/customer_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
+import 'package:autoledger/widgets/skeleton_loader.dart';
 
 class InvoiceDetail extends StatefulWidget {
   final int invoiceId;
@@ -108,7 +109,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_loading) return const Center(child: SkeletonLoader(itemCount: 4));
 
     if (_invoice == null || _customer == null) {
       return const Center(child: Text("Invoice not found."));
