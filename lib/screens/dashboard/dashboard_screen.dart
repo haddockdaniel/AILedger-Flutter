@@ -113,7 +113,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AutoLedger Dashboard'),
-        backgroundColor: AppTheme.primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -127,8 +126,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(color: AppTheme.primaryColor),
-              child: const Text('Menu',
-                  style: TextStyle(color: Colors.white, fontSize: 24)),
+              child: Text(
+                'Menu',
+                style: AppTheme.headerStyle.copyWith(color: Colors.white),
+              ),
             ),
             _buildDrawerItem('Customers', '/customers'),
             _buildDrawerItem('Invoices', '/invoices'),

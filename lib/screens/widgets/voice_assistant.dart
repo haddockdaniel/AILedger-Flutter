@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../services/voice_service.dart';
 import '../../utils/voice_event_bus.dart';
-import '../../utils/constants.dart';
+import '../../theme/app_theme.dart';
 
 class VoiceAssistant extends StatefulWidget {
   const VoiceAssistant({super.key});
@@ -79,16 +79,17 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
               constraints: const BoxConstraints(maxWidth: 250),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: primaryColor),
+                border: Border.all(color: AppTheme.primaryColor),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 _suggestion!,
-                style: const TextStyle(fontSize: 14),
+                style: AppTheme.bodyStyle,
               ),
             ),
           FloatingActionButton(
-            backgroundColor: _isListening ? Colors.red : primaryColor,
+            backgroundColor:
+                _isListening ? AppTheme.accentColor : AppTheme.primaryColor,
             onPressed: _isListening ? _stopListening : _startListening,
             child: Icon(_isListening ? Icons.mic_off : Icons.mic),
           ),

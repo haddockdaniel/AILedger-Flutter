@@ -55,9 +55,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryColor,
         title: const Text('Reset Password'),
       ),
       body: Padding(
@@ -67,7 +65,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             const SizedBox(height: 30),
             const Text(
               'Enter your email to receive a password reset link.',
-              style: TextStyle(fontSize: 16),
+              style: AppTheme.bodyStyle,
             ),
             const SizedBox(height: 20),
             TextField(
@@ -79,18 +77,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: isLoading ? null : sendResetLink,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: isLoading ? null : sendResetLink,
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text('Send Reset Link'),
               ),
-              child: isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                    )
-                  : const Text('Send Reset Link'),
             ),
           ],
         ),

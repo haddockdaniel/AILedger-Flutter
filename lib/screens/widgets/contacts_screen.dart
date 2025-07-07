@@ -156,7 +156,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Contacts'),
-        backgroundColor: AppTheme.primaryColor,
       ),
       body: Column(
         children: [

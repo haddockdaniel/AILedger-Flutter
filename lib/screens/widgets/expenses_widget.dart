@@ -149,10 +149,8 @@ class _ExpensesWidgetState extends State<ExpensesWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: Text("Expenses"),
-        backgroundColor: AppTheme.primaryColor,
+        title: const Text("Expenses"),
         actions: [
           IconButton(
             icon: Icon(Icons.mic),

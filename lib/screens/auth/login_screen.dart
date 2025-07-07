@@ -45,7 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -78,18 +77,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (session.errorMessage != null)
                         Text(
                           session.errorMessage!,
-                          style: const TextStyle(color: Colors.red),
+                          style: AppTheme.bodyStyle.copyWith(color: Colors.red),
                         ),
                       const SizedBox(height: 12),
                       session.isLoading
                           ? const CircularProgressIndicator()
-                          : ElevatedButton(
-                              onPressed: _login,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.primaryColor,
-                                minimumSize: const Size.fromHeight(48),
+                          : SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _login,
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(48),
+                                ),
+                                child: const Text('Login'),
                               ),
-                              child: const Text('Login'),
                             ),
                     ],
                   );
@@ -98,19 +99,19 @@ class _LoginScreenState extends State<LoginScreen> {
 			  const SizedBox(height: 12),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/signup'),
-                child: const Text(
+                child: Text(
                   "Don't have an account? Sign Up",
-                  style: TextStyle(decoration: TextDecoration.underline),
+                  style: AppTheme.bodyStyle.copyWith(
+                    decoration: TextDecoration.underline,
+                    color: AppTheme.accentColor,
+                  ),
                 ),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/reset-password');
                 },
-                child: const Text(
-                  'Forgot Password?',
-                  style: TextStyle(color: Colors.black54),
-                ),
+                child: Text('Forgot Password?', style: AppTheme.bodyStyle),
               ),
             ],
           ),

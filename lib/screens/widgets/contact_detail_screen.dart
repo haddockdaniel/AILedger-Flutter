@@ -86,7 +86,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Contact Details'),
-        backgroundColor: AppTheme.primaryColor,
         actions: [
           IconButton(icon: const Icon(Icons.edit), onPressed: _edit),
           IconButton(icon: const Icon(Icons.delete), onPressed: _delete),

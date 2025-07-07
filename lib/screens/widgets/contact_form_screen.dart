@@ -83,7 +83,6 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Contact' : 'New Contact'),
-        backgroundColor: AppTheme.primaryColor,
       ),
       body: _loading
           ? const LoadingIndicator()
@@ -132,7 +131,11 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
                       maxLines: 3,
                     ),
                     const SizedBox(height: 20),
-                    if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
+                    if (_error != null)
+                      Text(
+                        _error!,
+                        style: AppTheme.bodyStyle.copyWith(color: Colors.red),
+                      ),
                     ElevatedButton(
                       onPressed: _onSave,
                       child: Text(isEditing ? 'Update Contact' : 'Create Contact'),

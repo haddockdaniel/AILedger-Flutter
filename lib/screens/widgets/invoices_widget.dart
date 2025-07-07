@@ -137,10 +137,8 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: Text('Invoices'),
-        backgroundColor: AppTheme.primaryColor,
+        title: const Text('Invoices'),
         actions: [
           IconButton(
             icon: Icon(Icons.picture_as_pdf),

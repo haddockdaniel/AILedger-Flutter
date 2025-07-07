@@ -3,6 +3,7 @@ import 'package:autoledger/models/user_model.dart';
 import 'package:autoledger/services/auth_service.dart';
 import 'package:autoledger/services/payment_service.dart';
 import 'package:autoledger/services/user_service.dart';
+import 'package:autoledger/theme/app_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -155,7 +156,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const Divider(height: 32),
               if (user.subscriptionId != null) ...[
-                Text('Subscription: ${user.subscriptionStatus}'),
+                Text('Subscription: ${user.subscriptionStatus}',
+                    style: AppTheme.bodyStyle),
                 const SizedBox(height: 8),
                 if (user.subscriptionStatus == 'ACTIVE')
                   ElevatedButton(
@@ -166,7 +168,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
               ],
                   if (_error != null)
-                    Text(_error!, style: const TextStyle(color: Colors.red)),
+                    Text(
+                      _error!,
+                      style: AppTheme.bodyStyle.copyWith(color: Colors.red),
+                    ),
                 ],
               ),
             ),

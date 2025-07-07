@@ -90,7 +90,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEdit ? 'Edit Task' : 'New Task'),
-        backgroundColor: AppTheme.primaryColor,
       ),
       body: _loading
           ? const LoadingIndicator()

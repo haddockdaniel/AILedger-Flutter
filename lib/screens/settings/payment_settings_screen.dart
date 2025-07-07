@@ -38,8 +38,11 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
     setState(() => _isSaving = false);
 
     final snackBar = SnackBar(
-      content: Text(success ? 'Settings updated successfully!' : 'Failed to update settings.'),
-      backgroundColor: success ? Colors.green : Colors.red,
+      content: Text(
+        success ? 'Settings updated successfully!' : 'Failed to update settings.',
+        style: AppTheme.bodyStyle.copyWith(color: Colors.white),
+      ),
+      backgroundColor: success ? Colors.green : AppTheme.accentColor,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -89,7 +92,6 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Payment Settings'),
-        backgroundColor: AppTheme.primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -3,6 +3,7 @@ import 'package:autoledger/services/auth_service.dart';
 import 'package:autoledger/services/payment_service.dart';
 import 'package:autoledger/utils/constants.dart';
 import 'package:autoledger/utils/secure_storage.dart';
+import 'package:autoledger/theme/app_theme.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -71,12 +72,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 20),
             if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-            ElevatedButton(
-              onPressed: _loading ? null : _onSubmit,
-              child: _loading
-                  ? const CircularProgressIndicator()
-                  : const Text('Continue to Payment'),
+              Text(
+                _error!,
+                style: AppTheme.bodyStyle.copyWith(color: Colors.red),
+              ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _onSubmit,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                child: _loading
+                    ? const CircularProgressIndicator()
+                    : const Text('Continue to Payment'),
+              ),
             ),
           ]),
         ),

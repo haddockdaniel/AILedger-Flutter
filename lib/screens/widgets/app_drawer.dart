@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/constants.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/secure_storage.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/settings/payment_settings_screen.dart';
@@ -22,16 +22,12 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 30),
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: primaryColor),
+          DrawerHeader(
+            decoration: BoxDecoration(color: AppTheme.primaryColor),
             child: Center(
               child: Text(
                 'AutoLedger',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTheme.headerStyle.copyWith(color: Colors.white),
               ),
             ),
           ),
@@ -112,7 +108,7 @@ class AppDrawer extends StatelessWidget {
       required String route}) {
     return ListTile(
       leading: Icon(icon),
-      title: Text(label),
+      title: Text(label, style: AppTheme.bodyStyle),
       onTap: () {
         Navigator.pop(context);
         if (onNavigate != null) {

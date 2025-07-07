@@ -161,7 +161,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
                     icon: const Icon(Icons.cancel),
                     label: const Text("Cancel"),
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        ElevatedButton.styleFrom(backgroundColor: AppTheme.accentColor),
                     onPressed: _cancelInvoice,
                   ),
                 ],
