@@ -171,7 +171,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (_error != null)
                     Text(
                       _error!,
-                      style: AppTheme.bodyStyle.copyWith(color: Colors.red),
+                      style:
+                          AppTheme.bodyStyle.copyWith(color: AppTheme.errorColor),
                     ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../theme/app_theme.dart';
 
 /// A vertical list of grey bars to indicate loading state.
 class SkeletonLoader extends StatelessWidget {
@@ -22,12 +23,12 @@ class SkeletonLoader extends StatelessWidget {
       itemBuilder: (_, __) => Padding(
         padding: margin,
         child: Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
+          baseColor: AppTheme.borderColor.withOpacity(0.5),
+          highlightColor: AppTheme.borderColor.withOpacity(0.2),
           child: Container(
             height: height,
             width: double.infinity,
-            color: Colors.white,
+            color: AppTheme.surfaceColor,
           ),
         ),
       ),

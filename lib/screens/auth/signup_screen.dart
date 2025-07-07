@@ -75,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             if (_error != null)
               Text(
                 _error!,
-                style: AppTheme.bodyStyle.copyWith(color: Colors.red),
+                style: AppTheme.bodyStyle.copyWith(color: AppTheme.errorColor),
               ),
             SizedBox(
               width: double.infinity,

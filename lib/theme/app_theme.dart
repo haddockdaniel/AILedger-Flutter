@@ -8,7 +8,8 @@ class AppTheme {
   static const Color textPrimary = Color(0xFF1D3557);
   static const Color textSecondary = Color(0xFF457B9D); // Muted blue
   static const Color borderColor = Color(0xFFCED4DA); // Soft gray border
-
+  static const Color errorColor = Color(0xFFE63946); // Error red
+  
   static const TextStyle headerStyle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
@@ -34,6 +35,7 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: primaryColor,
         secondary: accentColor,
+		error: errorColor,
         background: backgroundColor,
         surface: surfaceColor,
         onPrimary: Colors.white,
@@ -81,6 +83,14 @@ class AppTheme {
         fillColor: Colors.white,
         border: OutlineInputBorder(
           borderSide: BorderSide(color: borderColor),
+          borderRadius: BorderRadius.circular(8),
+        ),
+		        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: errorColor),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: errorColor, width: 2),
           borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(

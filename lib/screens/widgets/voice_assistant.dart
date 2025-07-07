@@ -101,7 +101,7 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
               margin: const EdgeInsets.only(bottom: 8),
               constraints: const BoxConstraints(maxWidth: 250),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surfaceColor,
                 border: Border.all(color: AppTheme.primaryColor),
                 borderRadius: BorderRadius.circular(8),
               ),

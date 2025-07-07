@@ -36,13 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _resetPassword() {
-    // Navigate to reset password screen or implement inline
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Reset password not implemented yet.')),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +71,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (session.errorMessage != null)
                         Text(
                           session.errorMessage!,
-                          style: AppTheme.bodyStyle.copyWith(color: Colors.red),
+                          style:
+                              AppTheme.bodyStyle.copyWith(color: AppTheme.errorColor),
                         ),
                       const SizedBox(height: 12),
                       session.isLoading

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 /// Displays the currently filled voice slots as chips at the top of the screen.
 class VoiceSlotOverlay extends StatelessWidget {
@@ -17,7 +18,7 @@ class VoiceSlotOverlay extends StatelessWidget {
       child: Material(
         elevation: 4,
         borderRadius: BorderRadius.circular(8),
-        color: Colors.white.withOpacity(0.9),
+        color: AppTheme.surfaceColor.withOpacity(0.95),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Wrap(
@@ -29,6 +30,8 @@ class VoiceSlotOverlay extends StatelessWidget {
               return Chip(
                 label: Text('$label: $val'),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+				backgroundColor: AppTheme.accentColor.withOpacity(0.1),
+                labelStyle: AppTheme.bodyStyle,
               );
             }).toList(),
           ),
