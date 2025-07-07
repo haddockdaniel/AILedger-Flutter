@@ -11,6 +11,7 @@ import 'package:autoledger/screens/widgets/emails_widget.dart';
 import 'package:autoledger/screens/widgets/expenses_widget.dart';
 import 'package:autoledger/screens/widgets/reports_widget.dart';
 import 'package:autoledger/screens/widgets/ai_insights_widget.dart';
+import 'package:autoledger/screens/widgets/analytics_dashboard.dart';
 import 'package:autoledger/screens/settings/payment_settings_screen.dart';
 import 'package:autoledger/screens/widgets/customer_detail.dart';
 import 'package:autoledger/screens/profile_screen.dart';
@@ -67,6 +68,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return const ExpensesWidget();
       case '/reports':
         return const ReportsWidget();
+      case '/analytics':
+        return const AnalyticsDashboard();
       case '/insights':
         return const AIInsightsWidget();
       case '/settings':
@@ -137,6 +140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildDrawerItem('Emails', '/emails'),
             _buildDrawerItem('Expenses', '/expenses'),
             _buildDrawerItem('Reports', '/reports'),
+            _buildDrawerItem('Analytics', '/analytics'),
             _buildDrawerItem('Insights', '/insights'),
             _buildDrawerItem('Settings', '/settings'),
 			_buildDrawerItem('Profile', '/profile'),

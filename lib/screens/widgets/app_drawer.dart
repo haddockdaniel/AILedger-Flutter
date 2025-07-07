@@ -81,6 +81,12 @@ class AppDrawer extends StatelessWidget {
           ),
           _buildNavTile(
             context,
+            icon: Icons.show_chart,
+            label: 'Analytics',
+            route: '/analytics',
+          ),
+          _buildNavTile(
+            context,
             icon: Icons.insights,
             label: 'AI Insights',
             route: '/ai-insights',

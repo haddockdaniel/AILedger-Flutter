@@ -11,6 +11,7 @@ import 'package:autoledger/screens/widgets/emails_widget.dart';
 import 'package:autoledger/screens/widgets/expenses_widget.dart';
 import 'package:autoledger/screens/widgets/reports_widget.dart';
 import 'package:autoledger/screens/widgets/ai_insights_widget.dart';
+import 'package:autoledger/screens/widgets/analytics_dashboard.dart';
 import 'package:autoledger/screens/settings/payment_settings_screen.dart';
 import 'package:autoledger/screens/widgets/invoice_detail.dart';
 import 'package:autoledger/screens/widgets/contact_detail_screen.dart';
@@ -84,6 +85,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
             '/emails':         (_) => const EmailsWidget(),
             '/expenses':       (_) => const ExpensesWidget(),
             '/reports':        (_) => const ReportsWidget(),
+			'/analytics':      (_) => const AnalyticsDashboard(),
             '/insights':       (_) => const AIInsightsWidget(),
             '/settings':       (_) => const PaymentSettingsScreen(),
             '/contacts':       (_) => const ContactsScreen(),
