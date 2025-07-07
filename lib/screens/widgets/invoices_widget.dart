@@ -7,7 +7,8 @@ import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:autoledger/utils/voice_events.dart';
 import 'package:autoledger/screens/widgets/template_picker.dart';
 import 'package:autoledger/screens/widgets/invoice_detail.dart';
-import 'package:autoledger/widgets/skeleton_loader.dart';  // ← new
+import 'package:autoledger/widgets/skeleton_loader.dart';
+import 'package:autoledger/services/scheduler_service.dart';
 
 class InvoicesWidget extends StatefulWidget {
   @override
@@ -53,6 +54,16 @@ class _InvoicesWidgetState extends State<InvoicesWidget> {
       filteredInvoices = loaded;
       isLoading = false;
     });
+	
+	    for (final inv in invoices) {
+      if (inv.dueDate != null && !inv.isPaid && !inv.isCanceled) {
+        SchedulerService.scheduleInvoiceReminder(
+          inv,
+          inv.dueDate!,
+          () {},
+        );
+      }
+    }
   }
 
   void applySearchFilter(String query) {

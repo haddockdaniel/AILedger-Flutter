@@ -2,11 +2,14 @@ import 'dart:async';
 import 'email_service.dart';
 import '../models/email_model.dart';
 import '../models/task_model.dart';
+import '../models/invoice_model.dart';
+import 'notification_service.dart';
 
 /// Simple in-memory scheduler for demo purposes.
 class SchedulerService {
   static final Map<String, Timer> _timers = {};
-    static final Map<String, Timer> _taskTimers = {};
+  static final Map<String, Timer> _taskTimers = {};
+  static final Map<int, Timer> _invoiceTimers = {};
 
   /// Schedule sending [email] at [sendAt].
   static Future<void> scheduleEmail(Email email, DateTime sendAt) async {
@@ -29,7 +32,7 @@ class SchedulerService {
     _timers.remove(emailId);
   }
   
-    static void scheduleTaskReminder(
+  static void scheduleTaskReminder(
     Task task,
     DateTime remindAt,
     Function onReminder,
@@ -37,6 +40,12 @@ class SchedulerService {
     final duration = remindAt.difference(DateTime.now());
     if (duration.isNegative) {
       onReminder();
+	        NotificationService.scheduleNotification(
+        task.taskId.hashCode,
+        'Task Due',
+        task.description,
+        DateTime.now().add(const Duration(seconds: 1)),
+      );
       return;
     }
     _taskTimers[task.taskId]?.cancel();
@@ -44,11 +53,53 @@ class SchedulerService {
       onReminder();
       _taskTimers.remove(task.taskId);
     });
+	    NotificationService.scheduleNotification(
+      task.taskId.hashCode,
+      'Task Due',
+      task.description,
+      remindAt,
+    );
   }
 
   static void cancelTask(String taskId) {
     _taskTimers[taskId]?.cancel();
     _taskTimers.remove(taskId);
+	    NotificationService.cancel(taskId.hashCode);
+  }
+
+  static void scheduleInvoiceReminder(
+    Invoice invoice,
+    DateTime remindAt,
+    Function onReminder,
+  ) {
+    final duration = remindAt.difference(DateTime.now());
+    if (duration.isNegative) {
+      onReminder();
+      NotificationService.scheduleNotification(
+        invoice.invoiceId,
+        'Invoice Due',
+        'Invoice #${invoice.invoiceNumber} is due',
+        DateTime.now().add(const Duration(seconds: 1)),
+      );
+      return;
+    }
+    _invoiceTimers[invoice.invoiceId]?.cancel();
+    _invoiceTimers[invoice.invoiceId] = Timer(duration, () {
+      onReminder();
+      _invoiceTimers.remove(invoice.invoiceId);
+    });
+    NotificationService.scheduleNotification(
+      invoice.invoiceId,
+      'Invoice Due',
+      'Invoice #${invoice.invoiceNumber} is due',
+      remindAt,
+    );
+  }
+
+  static void cancelInvoice(int invoiceId) {
+    _invoiceTimers[invoiceId]?.cancel();
+    _invoiceTimers.remove(invoiceId);
+    NotificationService.cancel(invoiceId);
   }
   
 }
