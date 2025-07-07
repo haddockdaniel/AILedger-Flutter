@@ -17,6 +17,7 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
 
   bool _chargeTaxes = false;
   double _taxPercentage = 0.0;
+  String? _userId;
   bool _isSaving = false;
 
   @override
@@ -28,6 +29,7 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
   void _saveSettings() async {
     setState(() => _isSaving = true);
     final updatedSettings = UserTaxSettings(
+	  userId: _userId,
       chargeTaxes: _chargeTaxes,
       taxPercentage: _taxPercentage,
     );
@@ -47,6 +49,7 @@ class _PaymentSettingsScreenState extends State<PaymentSettingsScreen> {
     if (settings != null) {
       _chargeTaxes = settings.chargeTaxes;
       _taxPercentage = settings.taxPercentage;
+      _userId = settings.userId;
     }
 
     return Column(

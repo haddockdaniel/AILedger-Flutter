@@ -137,6 +137,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildDrawerItem('Reports', '/reports'),
             _buildDrawerItem('Insights', '/insights'),
             _buildDrawerItem('Settings', '/settings'),
+			_buildDrawerItem('Profile', '/profile'),
             ListTile(
               leading: const Icon(Icons.exit_to_app),
               title: const Text('Logout'),

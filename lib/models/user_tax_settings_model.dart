@@ -1,10 +1,10 @@
 class UserTaxSettings {
-  final String userId;
+  final String? userId;
   final bool chargeTaxes;
   final double taxPercentage;
 
   UserTaxSettings({
-    required this.userId,
+    this.userId,
     required this.chargeTaxes,
     required this.taxPercentage,
   });
@@ -19,7 +19,7 @@ class UserTaxSettings {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      if (userId != null) 'userId': userId,
       'chargeTaxes': chargeTaxes,
       'taxPercentage': taxPercentage,
     };

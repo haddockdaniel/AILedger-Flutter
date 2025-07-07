@@ -11,6 +11,17 @@ const String awsBucket = String.fromEnvironment('AWS_BUCKET', defaultValue: '');
 const String awsAccessKey = String.fromEnvironment('AWS_ACCESS_KEY', defaultValue: '');
 const String awsSecretKey = String.fromEnvironment('AWS_SECRET_KEY', defaultValue: '');
 
+/// Endpoint used by the [VoiceAssistant] to resolve intents.
+/// Defaults to the voice intent endpoint of [apiBaseUrl].
+const String voiceIntentUrl = String.fromEnvironment(
+    'VOICE_INTENT_URL',
+    defaultValue: '$apiBaseUrl/api/voice/intent');
+
+/// API key used for authenticating requests to the voice intent service.
+const String voiceApiKey =
+    String.fromEnvironment('VOICE_API_KEY', defaultValue: '');
+
+
 class SessionManager {
   static final _authService = AuthService();
   static Timer? _refreshTimer;

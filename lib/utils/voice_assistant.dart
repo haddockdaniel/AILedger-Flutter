@@ -5,14 +5,15 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http/http.dart' as http;
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'constants.dart';
 
 class VoiceAssistant {
   static final VoiceAssistant _instance = VoiceAssistant._internal();
   final stt.SpeechToText _speech = stt.SpeechToText();
   final FlutterTts _tts = FlutterTts();
   bool _isListening = false;
-  final String _intentApiUrl = 'https://yourapi.com/api/voice/intent'; // Replace with env value if needed
-  final String _apiKey = 'YOUR_API_KEY'; // Securely load this in prod
+  final String _intentApiUrl = voiceIntentUrl;
+  final String _apiKey = voiceApiKey;
   static const int _maxChainDepth = 4;
   
   factory VoiceAssistant() => _instance;

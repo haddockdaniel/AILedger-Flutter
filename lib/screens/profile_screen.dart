@@ -15,10 +15,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _updating = false;
   String? _error;
 
+  final _nameController = TextEditingController();
+  final _companyController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  bool _controllersInitialized = false;
+
   @override
   void initState() {
     super.initState();
     _futureUser = UserService.fetchUserProfile();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _companyController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
   }
 
   Future<void> _cancelSubscription(String subscriptionId) async {
@@ -42,40 +59,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: FutureBuilder<User>(
         future: _futureUser,
         builder: (ctx, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final user = snap.data!;
+		            if (!_controllersInitialized) {
+            _nameController.text = user.name;
+            _companyController.text = user.companyName ?? '';
+            _emailController.text = user.email;
+            _phoneController.text = user.phone ?? '';
+            _addressController.text = user.address ?? '';
+            _controllersInitialized = true;
+          }
           return Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(children: [
-              TextFormField(
-                initialValue: user.name,
-                decoration: const InputDecoration(labelText: 'Name'),
-                onChanged: (v) => user.name = v,
-              ),
-              TextFormField(
-                initialValue: user.companyName,
-                decoration: const InputDecoration(labelText: 'Company'),
-                onChanged: (v) => user.companyName = v,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _updating
-                    ? null
-                    : () async {
-                        setState(() => _updating = true);
-                        await UserService.updateUserProfile(user);
-                        setState(() => _updating = false);
-                      },
-                child: _updating
-                    ? const CircularProgressIndicator()
-                    : const Text('Save Profile'),
-              ),
-              const Divider(height: 32),
-              ElevatedButton(
-                onPressed: () => AuthService.resetPassword(user.email),
-                child: const Text('Change Password'),
-              ),
-              const Divider(height: 32),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                  ),
+                  TextField(
+                    controller: _companyController,
+                    decoration: const InputDecoration(labelText: 'Company'),
+                  ),
+                  TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextField(
+                    controller: _phoneController,
+                    decoration: const InputDecoration(labelText: 'Phone'),
+                    keyboardType: TextInputType.phone,
+                  ),
+                  TextField(
+                    controller: _addressController,
+                    decoration: const InputDecoration(labelText: 'Address'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _updating
+                        ? null
+                        : () async {
+                            setState(() => _updating = true);
+                            final updatedUser = User(
+                              id: user.id,
+                              name: _nameController.text.trim(),
+                              companyName: _companyController.text.trim().isEmpty
+                                  ? null
+                                  : _companyController.text.trim(),
+                              email: _emailController.text.trim(),
+                              phone: _phoneController.text.trim().isEmpty
+                                  ? null
+                                  : _phoneController.text.trim(),
+                              address: _addressController.text.trim().isEmpty
+                                  ? null
+                                  : _addressController.text.trim(),
+                            );
+                            await UserService.updateUserProfile(updatedUser);
+                            setState(() => _updating = false);
+                          },
+                    child: _updating
+                        ? const CircularProgressIndicator()
+                        : const Text('Save Profile'),
+                  ),
+                  const Divider(height: 32),
+                  ElevatedButton(
+                    onPressed: () => AuthService.resetPassword(user.email),
+                    child: const Text('Change Password'),
+                  ),
+                  const Divider(height: 32),
               if (user.subscriptionId != null) ...[
                 Text('Subscription: ${user.subscriptionStatus}'),
                 const SizedBox(height: 8),
@@ -87,9 +142,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: const Text('Cancel Subscription'),
                   ),
               ],
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-            ]),
+                  if (_error != null)
+                    Text(_error!, style: const TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
           );
         },
       ),
