@@ -26,6 +26,7 @@ import 'package:autoledger/widgets/voice_slot_overlay.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:provider/provider.dart';
 import 'providers/session_provider.dart';
+import 'providers/theme_provider.dart';
 
 class AutoLedgerApp extends StatefulWidget {
   const AutoLedgerApp({Key? key}) : super(key: key);
@@ -37,10 +38,12 @@ class AutoLedgerApp extends StatefulWidget {
 class _AutoLedgerAppState extends State<AutoLedgerApp> {
   Map<String, dynamic> _currentSlots = {};
   late final StreamSubscription _voiceSub;
-
+  late final ThemeProvider _themeProvider;
+  
   @override
   void initState() {
     super.initState();
+	    _themeProvider = ThemeProvider();
     // Subscribe to all voice intent events
     _voiceSub = VoiceEventBus().on<VoiceIntentEvent>().listen((evt) {
       setState(() {
@@ -68,12 +71,15 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SessionProvider()),
+        ChangeNotifierProvider(create: (_) => _themeProvider),
       ],
       child: Stack(
         children: [
           MaterialApp(
             title: 'AutoLedger',
             theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: context.watch<ThemeProvider>().mode,
             initialRoute: '/login',
             routes: {
               '/login':          (_) => const LoginScreen(),

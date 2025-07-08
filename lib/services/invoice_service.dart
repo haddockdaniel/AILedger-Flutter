@@ -33,10 +33,10 @@ class InvoiceService {
     }
   }
 
-  static Future<Invoice> getInvoiceById(String id) async {
+  static Future<Invoice> getInvoiceById(int id) async {
     final headers = await _headers();
     final response = await http.get(
-      Uri.parse('$apiBaseUrl/api/invoices/$id'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id'),
       headers: headers,
     );
     if (response.statusCode == 200) {
@@ -87,10 +87,10 @@ class InvoiceService {
     }
   }
 
-  static Future<void> deleteInvoice(String id) async {
+  static Future<void> deleteInvoice(int id) async {
     final headers = await _headers(isJson: false);
     final response = await http.delete(
-      Uri.parse('$apiBaseUrl/api/invoices/$id'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id'),
       headers: headers,
     );
     if (response.statusCode != 204) {
@@ -98,10 +98,10 @@ class InvoiceService {
     }
   }
 
-  static Future<void> cancelInvoice(String id) async {
+  static Future<void> cancelInvoice(int id) async {
     final headers = await _headers(isJson: false);
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices/$id/cancel'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id/cancel'),
       headers: headers,
     );
     if (response.statusCode != 200) {
@@ -109,10 +109,10 @@ class InvoiceService {
     }
   }
 
-  static Future<void> writeOffInvoice(String id) async {
+  static Future<void> writeOffInvoice(int id) async {
     final headers = await _headers(isJson: false);
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices/$id/writeoff'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id/writeoff'),
       headers: headers,
     );
     if (response.statusCode != 200) {
@@ -120,10 +120,10 @@ class InvoiceService {
     }
   }
 
-  static Future<void> discountInvoice(String id, double discount) async {
+  static Future<void> discountInvoice(int id, double discount) async {
     final headers = await _headers();
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices/$id/discount'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id/discount'),
       headers: headers,
       body: jsonEncode({'discount': discount}),
     );
@@ -132,10 +132,10 @@ class InvoiceService {
     }
   }
 
-  static Future<void> regenerateInvoicePdf(String id) async {
+  static Future<void> regenerateInvoicePdf(int id) async {
     final headers = await _headers(isJson: false);
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices/$id/regenerate'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id/regenerate'),
       headers: headers,
     );
     if (response.statusCode != 200) {
@@ -143,10 +143,10 @@ class InvoiceService {
     }
   }
 
-  static Future<void> sendInvoice(String id) async {
+  static Future<void> sendInvoice(int id) async {
     final headers = await _headers(isJson: false);
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices/$id/send'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id/send'),
       headers: headers,
     );
     if (response.statusCode != 200) {
@@ -154,10 +154,10 @@ class InvoiceService {
     }
   }
   
-  static Future<void> sendPastDueReminder(String id) async {
+  static Future<void> sendPastDueReminder(int id) async {
     final headers = await _headers(isJson: false);
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices/$id/reminder'),
+        Uri.parse('$apiBaseUrl/api/invoices/$id/reminder'),
       headers: headers,
     );
     if (response.statusCode != 200) {

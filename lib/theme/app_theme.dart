@@ -100,4 +100,24 @@ class AppTheme {
       ),
     );
   }
+  
+  static ThemeData get darkTheme {
+    return ThemeData.dark().copyWith(
+      useMaterial3: true,
+      colorScheme: const ColorScheme.dark(
+        primary: primaryColor,
+        secondary: accentColor,
+        error: errorColor,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: accentColor,
+        foregroundColor: Colors.white,
+      ),
+    );
+  }
+  
 }

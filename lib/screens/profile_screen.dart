@@ -9,6 +9,8 @@ import '../widgets/skeleton_loader.dart';
 import '../widgets/logo_generator_dialog.dart';
 import '../services/logo_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -204,6 +206,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ElevatedButton(
                     onPressed: () => AuthService.resetPassword(user.email),
                     child: const Text('Change Password'),
+                  ),
+                  SwitchListTile(
+                    title: const Text('Dark Mode'),
+                    value: context.watch<ThemeProvider>().mode == ThemeMode.dark,
+                    onChanged: (val) => context
+                        .read<ThemeProvider>()
+                        .setDarkMode(val),
                   ),
                   const Divider(height: 32),
               if (user.subscriptionId != null) ...[

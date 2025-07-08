@@ -101,7 +101,7 @@ class AppDrawer extends StatelessWidget {
             context,
             icon: Icons.settings,
             label: 'Contacts',
-            route: '/Contacts',
+            route: '/contacts',
           ),
           const Divider(),
           ListTile(
