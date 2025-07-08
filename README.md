@@ -21,4 +21,13 @@ flutter pub get
 flutter run --dart-define=API_BASE_URL=https://api.example.com
 ```
 
+You can provide additional runtime configuration using `--dart-define` flags:
+```bash
+flutter run \
+  --dart-define=API_BASE_URL=https://api.example.com \
+  --dart-define=OPENAI_API_KEY=<your-key> \
+  --dart-define=INTENT_API_URL=https://intent.example.com \
+  --dart-define=INTENT_API_KEY=<optional-key>
+```
+
 Run tests with `flutter test`.
