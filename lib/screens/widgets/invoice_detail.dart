@@ -7,6 +7,7 @@ import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';
 import 'package:autoledger/services/scheduler_service.dart';
 import 'package:autoledger/services/ai_insight_service.dart';
+import '../../services/logo_service.dart';
 
 class InvoiceDetail extends StatefulWidget {
   final int invoiceId;
@@ -22,11 +23,18 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
   Customer? _customer;
   bool _loading = true;
   String? _aiSuggestion;
+  Uint8List? _logo;
 
   @override
   void initState() {
     super.initState();
+    _loadLogo();
     _loadInvoice();
+  }
+  
+    Future<void> _loadLogo() async {
+    _logo = await LogoService.getLogo();
+    if (mounted) setState(() {});
   }
 
   Future<void> _loadInvoice() async {
@@ -135,6 +143,10 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+		  if (_logo != null) ...[
+              Center(child: Image.memory(_logo!, height: 80)),
+              const SizedBox(height: 12),
+            ],
             Text("Customer: ${_customer!.fullName}",
                 style: AppTheme.headerStyle),
             Text("Email: ${_customer!.email}"),

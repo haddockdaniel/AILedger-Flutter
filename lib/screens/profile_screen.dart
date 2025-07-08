@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import '../widgets/skeleton_loader.dart';
 import '../widgets/logo_generator_dialog.dart';
 import '../services/logo_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -38,6 +39,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadLogo() async {
     _logoImage = await LogoService.getLogo();
     if (mounted) setState(() {});
+  }
+    Future<void> _uploadLogo() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+    final bytes = await picked.readAsBytes();
+    await LogoService.saveLogo(bytes);
+    setState(() => _logoImage = bytes);
   }
 
   @override
@@ -178,9 +187,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 8),
                       ],
                     ),
-                  ElevatedButton(
-                    onPressed: _showLogoGenerator,
-                    child: const Text('Use AI to create your logo'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _uploadLogo,
+                        child: const Text('Upload Logo'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _showLogoGenerator,
+                        child: const Text('Use AI to create your logo'),
+                      ),
+                    ],
                   ),
                   const Divider(height: 32),
                   ElevatedButton(
