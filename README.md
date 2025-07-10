@@ -1,33 +1,45 @@
 # AILedger Flutter
 
-This repository contains the Flutter client for **AutoLedger**, an application that helps small businesses manage their finances.
-
-See [lib/README.md](lib/README.md) for setup instructions and development tips.
+AutoLedger's Flutter client helps small businesses manage finances by integrating with a backend API.
 
 ## Key Features
-
-1. **Invoice & Customer Management** – create invoices, track payments and manage customer information.
-2. **Expense Tracking with Receipt Scanning** – capture receipts and log expenses on the go.
-3. **Comprehensive Reporting** – generate tax, customer and cash flow reports with export to PDF, CSV and JSON.
-4. **AI Insights and Analytics** – leverage AI to forecast cash flow and understand payment risks.
-5. **Voice Commands and Dark Mode** – navigate the app hands‑free and choose between light or dark appearance.
+- **Invoice & Customer Management** – create invoices, track payments and manage customer information.
+- **Expense Tracking with Receipt Scanning** – capture receipts and log expenses on the go.
+- **Comprehensive Reporting** – generate tax, customer and cash flow reports with export to PDF, CSV and JSON.
+- **AI Insights and Analytics** – leverage AI to forecast cash flow and understand payment risks.
+- **Voice Commands and Dark Mode** – navigate the app hands‑free and choose between light or dark appearance.
 
 ## Getting Started
+1. Install Flutter 3.13 or later.
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Provide runtime configuration using `--dart-define`:
+   - `API_BASE_URL` – base URL of the backend API.
+   - `OPENAI_API_KEY` – key for AI insights.
+   - `INTENT_API_URL` – URL for processing voice commands (optional).
+   - `INTENT_API_KEY` – API key for the intent service (optional).
 
-Install Flutter 3.13 or later and run:
-
-```bash
-flutter pub get
-flutter run --dart-define=API_BASE_URL=https://api.example.com
-```
-
-You can provide additional runtime configuration using `--dart-define` flags:
+Example run:
 ```bash
 flutter run \
   --dart-define=API_BASE_URL=https://api.example.com \
   --dart-define=OPENAI_API_KEY=<your-key> \
   --dart-define=INTENT_API_URL=https://intent.example.com \
   --dart-define=INTENT_API_KEY=<optional-key>
-```
+  --dart-define=OPENAI_API_KEY=<your-key>
 
-Run tests with `flutter test`.
+## Reports
+Navigate to **Reports** from the side drawer to generate tax, customer or cash flow reports. Use the date range picker to filter data and export results as PDF, CSV or JSON.
+
+## Voice Commands
+The app supports voice navigation and actions. Configure the intent API details using the `INTENT_API_URL` and `INTENT_API_KEY` defines if you plan to enable this feature.
+
+## Sample Templates
+Default email and invoice templates reside in `lib/data`. They are accessible through `EmailTemplateService.getDefaultTemplates()` and `InvoiceTemplateService.getDefaultTemplates()` for seeding new installs. Adjust these examples or provide your own via the backend API.
+
+## Running Tests
+```bash
+flutter test
+```

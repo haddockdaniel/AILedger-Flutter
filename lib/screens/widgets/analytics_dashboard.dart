@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:autoledger/services/invoice_service.dart';
 import 'package:autoledger/services/ai_insight_service.dart';
@@ -44,7 +45,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
         _loading = false;
       });
     } catch (e) {
-      print('Failed to load analytics: $e');
+      debugPrint('Failed to load analytics: $e');
       setState(() => _loading = false);
     }
   }

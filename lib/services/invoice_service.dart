@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/invoice_model.dart';
 import '../utils/constants.dart';
 import '../utils/secure_storage.dart';
+import 'database_service.dart';
+import 'connectivity_service.dart';
 
 class InvoiceService {
   static Future<String?> _getToken() async {
@@ -20,82 +22,105 @@ class InvoiceService {
   }
 
   static Future<List<Invoice>> getInvoices() async {
-    final headers = await _headers();
-    final response = await http.get(
-      Uri.parse('$apiBaseUrl/api/invoices'),
-      headers: headers,
-    );
-    if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body);
-      return body.map((json) => Invoice.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load invoices');
+    if (await ConnectivityService.isOnline()) {
+      try {
+        final headers = await _headers();
+        final response = await http.get(
+          Uri.parse('$apiBaseUrl/api/invoices'),
+          headers: headers,
+        );
+        if (response.statusCode == 200) {
+          List<dynamic> body = jsonDecode(response.body);
+          final invoices =
+              body.map((json) => Invoice.fromJson(json)).toList();
+          for (final inv in invoices) {
+            await DatabaseService().upsertInvoice(inv);
+          }
+          return invoices;
+        }
+      } catch (_) {}
     }
+    // Fallback to local cache
+    return DatabaseService().getInvoices();
   }
 
-  static Future<Invoice> getInvoiceById(int id) async {
-    final headers = await _headers();
-    final response = await http.get(
-        Uri.parse('$apiBaseUrl/api/invoices/$id'),
-      headers: headers,
-    );
-    if (response.statusCode == 200) {
-      return Invoice.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load invoice');
+  static Future<Invoice?> getInvoiceById(int id) async {
+    if (await ConnectivityService.isOnline()) {
+      try {
+        final headers = await _headers();
+        final response = await http.get(
+          Uri.parse('$apiBaseUrl/api/invoices/$id'),
+          headers: headers,
+        );
+        if (response.statusCode == 200) {
+          final inv = Invoice.fromJson(jsonDecode(response.body));
+          await DatabaseService().upsertInvoice(inv);
+          return inv;
+        }
+      } catch (_) {}
     }
+    return DatabaseService().getInvoice(id);
   }
   
   static Future<List<Invoice>> getInvoicesByCustomerId(
-      String customerId) async {
-    final headers = await _headers();
-    final response = await http.get(
-      Uri.parse('$apiBaseUrl/api/invoices?customerId=$customerId'),
-      headers: headers,
-    );
-    if (response.statusCode == 200) {
-      final list = jsonDecode(response.body) as List<dynamic>;
-      return list.map((j) => Invoice.fromJson(j)).toList();
-    } else {
-      throw Exception('Failed to load invoices');
+     String customerId) async {
+     if (await ConnectivityService.isOnline()) {
+      try {
+        final headers = await _headers();
+        final response = await http.get(
+          Uri.parse('$apiBaseUrl/api/invoices?customerId=$customerId'),
+          headers: headers,
+        );
+        if (response.statusCode == 200) {
+          final list = jsonDecode(response.body) as List<dynamic>;
+          final invoices = list.map((j) => Invoice.fromJson(j)).toList();
+          for (final inv in invoices) {
+            await DatabaseService().upsertInvoice(inv);
+          }
+          return invoices;
+        }
+      } catch (_) {}
     }
+    final all = await DatabaseService().getInvoices();
+    return all.where((i) => i.customerId?.toString() == customerId).toList();
   }
 
   static Future<Invoice> createInvoice(Invoice invoice) async {
-    final headers = await _headers();
-    final response = await http.post(
-      Uri.parse('$apiBaseUrl/api/invoices'),
-      headers: headers,
-      body: jsonEncode(invoice.toJson()),
-    );
-    if (response.statusCode == 201) {
-      return Invoice.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to create invoice');
+    if (await ConnectivityService.isOnline()) {
+      final created = await createInvoiceOnline(invoice);
+      await DatabaseService().upsertInvoice(created, isSynced: true);
+      return created;
     }
+    final tmpId = -DateTime.now().millisecondsSinceEpoch;
+    final data = invoice.toJson()..['invoiceId'] = tmpId;
+    final local = Invoice.fromJson(data);
+    await DatabaseService().upsertInvoice(local, isSynced: false);
+    await DatabaseService().addPendingAction(
+        tmpId.toString(), 'invoice', 'create', data: jsonEncode(invoice.toJson()));
+    return local;
   }
 
   static Future<void> updateInvoice(Invoice invoice) async {
-    final headers = await _headers();
-    final response = await http.put(
-      Uri.parse('$apiBaseUrl/api/invoices/${invoice.invoiceId}'),
-      headers: headers,
-      body: jsonEncode(invoice.toJson()),
-    );
-    if (response.statusCode != 200) {
-      throw Exception('Failed to update invoice');
+    if (await ConnectivityService.isOnline()) {
+      await updateInvoiceOnline(invoice);
+      await DatabaseService().upsertInvoice(invoice, isSynced: true);
+      return;
     }
+    await DatabaseService().upsertInvoice(invoice, isSynced: false);
+    await DatabaseService().addPendingAction(
+        invoice.invoiceId.toString(), 'invoice', 'update',
+        data: jsonEncode(invoice.toJson()));
   }
 
   static Future<void> deleteInvoice(int id) async {
-    final headers = await _headers(isJson: false);
-    final response = await http.delete(
-        Uri.parse('$apiBaseUrl/api/invoices/$id'),
-      headers: headers,
-    );
-    if (response.statusCode != 204) {
-      throw Exception('Failed to delete invoice');
+    if (await ConnectivityService.isOnline()) {
+      await deleteInvoiceOnline(id);
+      await DatabaseService().deleteInvoice(id);
+      return;
     }
+    await DatabaseService().deleteInvoice(id);
+    await DatabaseService()
+        .addPendingAction(id.toString(), 'invoice', 'delete');
   }
 
   static Future<void> cancelInvoice(int id) async {
@@ -162,6 +187,43 @@ class InvoiceService {
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to send reminder');
+    }
+  }
+  
+  // -------- Online helpers used by the sync service --------
+  static Future<Invoice> createInvoiceOnline(Invoice invoice) async {
+    final headers = await _headers();
+    final response = await http.post(
+      Uri.parse('$apiBaseUrl/api/invoices'),
+      headers: headers,
+      body: jsonEncode(invoice.toJson()),
+    );
+    if (response.statusCode == 201) {
+      return Invoice.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('Failed to create invoice');
+  }
+
+  static Future<void> updateInvoiceOnline(Invoice invoice) async {
+    final headers = await _headers();
+    final response = await http.put(
+      Uri.parse('$apiBaseUrl/api/invoices/${invoice.invoiceId}'),
+      headers: headers,
+      body: jsonEncode(invoice.toJson()),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update invoice');
+    }
+  }
+
+  static Future<void> deleteInvoiceOnline(int id) async {
+    final headers = await _headers(isJson: false);
+    final response = await http.delete(
+      Uri.parse('$apiBaseUrl/api/invoices/$id'),
+      headers: headers,
+    );
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete invoice');
     }
   }
   

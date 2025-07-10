@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:autoledger/services/ai_insight_service.dart';
 import 'package:autoledger/theme/app_theme.dart';
 import 'package:autoledger/widgets/skeleton_loader.dart';
@@ -53,7 +54,7 @@ class _AIInsightsWidgetState extends State<AIInsightsWidget> {
         _loading = false;
       });
     } catch (e) {
-      print('Error loading AI insights: $e');
+      debugPrint('Error loading AI insights: $e');
       setState(() => _loading = false);
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:autoledger/models/invoice_model.dart';
 import 'package:autoledger/models/customer_model.dart';
 import 'package:autoledger/services/invoice_service.dart';
@@ -54,7 +55,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
         _loading = false;
       });
     } catch (e) {
-      print('Error loading invoice: $e');
+      debugPrint('Error loading invoice: $e');
       setState(() => _loading = false);
     }
   }

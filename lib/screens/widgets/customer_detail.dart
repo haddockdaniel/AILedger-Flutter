@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:autoledger/models/customer_model.dart';
 import 'package:autoledger/models/invoice_model.dart';
 import 'package:autoledger/services/customer_service.dart';
@@ -54,7 +55,7 @@ class _CustomerDetailState extends State<CustomerDetail> {
         _loading = false;
       });
     } catch (e) {
-      print('Error loading customer detail: $e');
+      debugPrint('Error loading customer detail: $e');
       setState(() => _loading = false);
     }
   }
