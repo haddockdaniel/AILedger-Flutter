@@ -3,6 +3,8 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
 import '../../services/voice_service.dart';
 import '../../utils/voice_event_bus.dart';
+import 'package:provider/provider.dart';
+import '../../providers/voice_settings_provider.dart';
 import '../../theme/app_theme.dart';
 
 class VoiceAssistant extends StatefulWidget {
@@ -35,7 +37,8 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
   }
 
   void _startListening() async {
-    if (_isListening) return;
+    final settings = context.read<VoiceSettingsProvider>();
+    if (_isListening || !settings.isEnabled) return;
     if (!_speech.isAvailable) {
       await _tts.speak('Speech recognition unavailable');
       return;
@@ -53,7 +56,7 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
       pauseFor: const Duration(seconds: 5),
       partialResults: true,
       localeId: 'en_US',
-      onDevice: true,
+      onDevice: settings.offlineOnly,
     );
   }
 
@@ -70,20 +73,32 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
   }
 
   Future<void> _processCommand(String command) async {
+    final settings = context.read<VoiceSettingsProvider>();
+    final custom = settings.customCommands[command.toLowerCase()];
+    if (custom != null) {
+      setState(() => _suggestion = '');
+      VoiceEventBus.emitIntent(custom);
+      await _tts.speak('Command received');
+      return;
+    }
+    if (settings.offlineOnly) {
+      await _tts.speak("Sorry, I didn't understand that");
+      return;
+    }
     final response = await VoiceService.processCommand(command);
     if (response.success) {
       setState(() => _suggestion = response.suggestion);
       VoiceEventBus.emitIntent(response.intent, response.parameters);
-	  if (response.suggestion.isNotEmpty) {
+      if (response.suggestion.isNotEmpty) {
         _tts.speak(response.suggestion);
       } else {
         _tts.speak('Command received');
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sorry, I didn’t understand that.')),
+        const SnackBar(content: Text('Sorry, I didn\u2019t understand that.')),
       );
-	  _tts.speak("Sorry, I didn't understand that");
+      _tts.speak("Sorry, I didn't understand that");
     }
   }
 
