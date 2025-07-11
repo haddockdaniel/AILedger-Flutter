@@ -43,7 +43,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
   late final StreamSubscription _voiceSub;
   late final ThemeProvider _themeProvider;
   late final VoiceSettingsProvider _voiceSettings;
-  
+
   @override
   void initState() {
     super.initState();
@@ -79,6 +79,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => _themeProvider),
         ChangeNotifierProvider(create: (_) => _voiceSettings),
+
       ],
       child: Stack(
         children: [
