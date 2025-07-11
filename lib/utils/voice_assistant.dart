@@ -16,6 +16,7 @@ class VoiceAssistant {
   final String _intentApiUrl = voiceIntentUrl;
   final String _apiKey = voiceApiKey;
   static const int _maxChainDepth = 4;
+  VoiceSettingsProvider? settingsProvider;
   
   factory VoiceAssistant() => _instance;
 
@@ -27,6 +28,7 @@ class VoiceAssistant {
 
   Future<void> startListening() async {
     if (!_isListening) {
+      if (settingsProvider != null && !settingsProvider!.isEnabled) return;
       _isListening = true;
       _speech.listen(
         onResult: (result) {
@@ -38,6 +40,7 @@ class VoiceAssistant {
         listenFor: const Duration(seconds: 10),
         pauseFor: const Duration(seconds: 3),
         partialResults: false,
+        onDevice: settingsProvider?.offlineOnly ?? false,
       );
     }
   }
@@ -68,6 +71,17 @@ class VoiceAssistant {
 
   Future<void> _processText(String inputText, [int depth = 0]) async {
     try {
+      final custom = settingsProvider?.customCommands[inputText.toLowerCase()];
+      if (custom != null) {
+        _handleIntent({'intent': {'action': 'navigate', 'target': custom}}, depth);
+        return;
+      }
+
+      if (settingsProvider?.offlineOnly == true) {
+        _speak("Sorry, I didn't understand that.");
+        return;
+      }
+
       final response = await http.post(
         Uri.parse(_intentApiUrl),
         headers: {

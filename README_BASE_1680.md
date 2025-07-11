@@ -36,10 +36,10 @@ Navigate to **Reports** from the side drawer to generate tax, customer or cash f
 ## Voice Commands
 The app supports voice navigation and actions. Configure the intent API details using the `INTENT_API_URL` and `INTENT_API_KEY` defines if you plan to enable this feature.
 Voice settings allow you to disable the assistant, run recognition offline only and map your own phrases to intents. Open the **Voice Settings** screen to customize these options.
-<<<<<<< HEAD
+<<<<<<<<< Temporary merge branch 1
 
-=======
->>>>>>> main
+=========
+>>>>>>>>> Temporary merge branch 2
 ## Sample Templates
 Default email and invoice templates reside in `lib/data`. They are accessible through `EmailTemplateService.getDefaultTemplates()` and `InvoiceTemplateService.getDefaultTemplates()` for seeding new installs. Adjust these examples or provide your own via the backend API.
 
