@@ -21,6 +21,8 @@ import 'package:autoledger/screens/auth/subscription_screen.dart';
 import 'package:autoledger/screens/profile_screen.dart';
 import 'package:autoledger/screens/widgets/contacts_screen.dart';
 import 'package:autoledger/screens/widgets/receipt_scanner.dart';
+import 'package:autoledger/screens/onboarding/onboarding_screen.dart';
+import 'package:autoledger/services/onboarding_service.dart';
 
 // New imports for voice overlay
 import 'package:autoledger/widgets/voice_slot_overlay.dart';
@@ -43,13 +45,14 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
   late final StreamSubscription _voiceSub;
   late final ThemeProvider _themeProvider;
   late final VoiceSettingsProvider _voiceSettings;
-
+  String? _initialRoute;
   @override
   void initState() {
     super.initState();
     _themeProvider = ThemeProvider();
     _voiceSettings = VoiceSettingsProvider();
     VoiceAssistant().settingsProvider = _voiceSettings;
+    _loadInitialRoute();
     // Subscribe to all voice intent events
     _voiceSub = VoiceEventBus().on<VoiceIntentEvent>().listen((evt) {
       setState(() {
@@ -72,14 +75,27 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
     super.dispose();
   }
 
+  Future<void> _loadInitialRoute() async {
+    final completed = await OnboardingService.isComplete();
+    setState(() {
+      _initialRoute = completed ? '/login' : '/onboarding';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_initialRoute == null) {
+      return MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => _themeProvider),
         ChangeNotifierProvider(create: (_) => _voiceSettings),
-
       ],
       child: Stack(
         children: [
@@ -88,8 +104,9 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: context.watch<ThemeProvider>().mode,
-            initialRoute: '/login',
+            initialRoute: _initialRoute ?? '/login',
             routes: {
+              '/onboarding':     (_) => const OnboardingScreen(),
               '/login':          (_) => const LoginScreen(),
             '/reset-password': (_) => const ResetPasswordScreen(),
             '/dashboard':      (_) => const DashboardScreen(),
