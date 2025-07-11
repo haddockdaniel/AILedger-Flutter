@@ -95,11 +95,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => _themeProvider),
-<<<<<<< HEAD
         ChangeNotifierProvider(create: (_) => _voiceSettings),
-=========
-		ChangeNotifierProvider(create: (_) => _voiceSettings),
->>>>>>>>> Temporary merge branch 2
       ],
       child: Stack(
         children: [

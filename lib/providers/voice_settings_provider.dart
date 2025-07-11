@@ -59,7 +59,4 @@ class VoiceSettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-<<<<<<< HEAD
-}
-=======
 }
