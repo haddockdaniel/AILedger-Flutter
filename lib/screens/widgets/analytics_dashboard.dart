@@ -59,7 +59,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
       final forecast = await AIInsightService.forecastCashFlow(invoices: invoices);
       final risk = await AIInsightService.latePaymentRiskScores(invoices: invoices);
       final basic = await AIInsightService.getInsights();
-	  
+
       setState(() {
         _filteredInvoices = invoices;
         _sales = _buildMonthlySales(invoices);
@@ -153,6 +153,70 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
   }
   
     void _openInvoiceList() {
+    if (_filteredInvoices.isEmpty) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FilteredInvoices(
+          invoices: _filteredInvoices,
+          title: 'Invoices',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickDateRange() async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange: DateTimeRange(start: _startDate, end: _endDate),
+    );
+    if (picked != null) {
+      setState(() {
+        _startDate = picked.start;
+        _endDate = picked.end;
+      });
+      _loadData();
+    }
+  }
+
+  Widget _buildFilters() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButton<String?>(
+          value: _customerId,
+          hint: const Text('All Customers'),
+          onChanged: (val) {
+            setState(() => _customerId = val);
+            _loadData();
+          },
+          items: [
+            const DropdownMenuItem(value: null, child: Text('All Customers')),
+            ..._customers.map((c) => DropdownMenuItem(
+                  value: c.customerId,
+                  child: Text(c.fullName),
+                )),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Text('From: ${DateFormat.yMd().format(_startDate)}'),
+            const SizedBox(width: 16),
+            Text('To: ${DateFormat.yMd().format(_endDate)}'),
+            IconButton(
+              icon: const Icon(Icons.date_range),
+              onPressed: _pickDateRange,
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  void _openInvoiceList() {
     if (_filteredInvoices.isEmpty) return;
     Navigator.push(
       context,
