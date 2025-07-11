@@ -13,6 +13,7 @@ import 'package:autoledger/screens/widgets/reports_widget.dart';
 import 'package:autoledger/screens/widgets/ai_insights_widget.dart';
 import 'package:autoledger/screens/widgets/analytics_dashboard.dart';
 import 'package:autoledger/screens/settings/payment_settings_screen.dart';
+import 'package:autoledger/screens/settings/voice_settings_screen.dart';
 import 'package:autoledger/screens/widgets/invoice_detail.dart';
 import 'package:autoledger/screens/widgets/contact_detail_screen.dart';
 import 'package:autoledger/screens/auth/signup_screen.dart';
@@ -24,9 +25,11 @@ import 'package:autoledger/screens/widgets/receipt_scanner.dart';
 // New imports for voice overlay
 import 'package:autoledger/widgets/voice_slot_overlay.dart';
 import 'package:autoledger/utils/voice_event_bus.dart';
+import 'package:autoledger/utils/voice_assistant.dart';
 import 'package:provider/provider.dart';
 import 'providers/session_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/voice_settings_provider.dart';
 
 class AutoLedgerApp extends StatefulWidget {
   const AutoLedgerApp({Key? key}) : super(key: key);
@@ -39,11 +42,14 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
   Map<String, dynamic> _currentSlots = {};
   late final StreamSubscription _voiceSub;
   late final ThemeProvider _themeProvider;
-  
+  late final VoiceSettingsProvider _voiceSettings;
+	
   @override
   void initState() {
     super.initState();
-	    _themeProvider = ThemeProvider();
+    _themeProvider = ThemeProvider();
+    _voiceSettings = VoiceSettingsProvider();
+    VoiceAssistant().settingsProvider = _voiceSettings;
     // Subscribe to all voice intent events
     _voiceSub = VoiceEventBus().on<VoiceIntentEvent>().listen((evt) {
       setState(() {
@@ -72,6 +78,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => _themeProvider),
+		ChangeNotifierProvider(create: (_) => _voiceSettings),
       ],
       child: Stack(
         children: [
@@ -94,6 +101,7 @@ class _AutoLedgerAppState extends State<AutoLedgerApp> {
 			'/analytics':      (_) => const AnalyticsDashboard(),
             '/insights':       (_) => const AIInsightsWidget(),
             '/settings':       (_) => const PaymentSettingsScreen(),
+            '/voice-settings': (_) => const VoiceSettingsScreen(),
             '/contacts':       (_) => const ContactsScreen(),
 			'/receipt-scan':  (_) => const ReceiptScannerScreen(),
             '/signup':         (_) => const SignUpScreen(),

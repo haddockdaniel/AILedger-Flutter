@@ -5,6 +5,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http/http.dart' as http;
 import 'package:autoledger/utils/voice_event_bus.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import '../providers/voice_settings_provider.dart';
 import 'constants.dart';
 
 class VoiceAssistant {
