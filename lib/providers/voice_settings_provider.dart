@@ -58,8 +58,8 @@ class VoiceSettingsProvider extends ChangeNotifier {
     await prefs.setString(_customKey, jsonEncode(_customCommands));
     notifyListeners();
   }
+
 <<<<<<< HEAD
 }
 =======
 }
->>>>>>> main
