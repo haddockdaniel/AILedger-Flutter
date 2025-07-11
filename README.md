@@ -47,3 +47,6 @@ Default email and invoice templates reside in `lib/data`. They are accessible th
 flutter test
 
 ```
+
+## License
+This project is licensed under the [MIT License](LICENSE).
