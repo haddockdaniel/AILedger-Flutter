@@ -95,57 +95,81 @@ class _CustomersWidgetState extends State<CustomersWidget> {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(existing == null ? 'Add Customer' : 'Edit Customer'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name')),
-            TextField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email')),
-            TextField(
-                controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Phone')),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: invoicePref,
-              decoration:
-                  const InputDecoration(labelText: 'Invoice Preference'),
-              items: const [
-                DropdownMenuItem(value: 'email', child: Text('Email')),
-                DropdownMenuItem(value: 'text', child: Text('Text')),
+      builder: (ctx) {
+        final emailFocus = FocusNode();
+        final phoneFocus = FocusNode();
+
+        Future<void> autoFill() async {
+          final email = emailController.text.trim();
+          final phone = phoneController.text.trim();
+          if (email.isEmpty && phone.isEmpty) return;
+          final result = await _customerService.autoFill(
+            email: email.isNotEmpty ? email : null,
+            phone: phone.isNotEmpty ? phone : null,
+          );
+          if (result != null && nameController.text.isEmpty) {
+            nameController.text = result.fullName;
+            invoicePref = result.invoicePreference;
+          }
+        }
+
+        emailFocus.addListener(() { if (!emailFocus.hasFocus) autoFill(); });
+        phoneFocus.addListener(() { if (!phoneFocus.hasFocus) autoFill(); });
+
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) => AlertDialog(
+            title: Text(existing == null ? 'Add Customer' : 'Edit Customer'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Name')),
+                TextField(
+                    controller: emailController,
+                    focusNode: emailFocus,
+                    decoration: const InputDecoration(labelText: 'Email')),
+                TextField(
+                    controller: phoneController,
+                    focusNode: phoneFocus,
+                    decoration: const InputDecoration(labelText: 'Phone')),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: invoicePref,
+                  decoration:
+                      const InputDecoration(labelText: 'Invoice Preference'),
+                  items: const [
+                    DropdownMenuItem(value: 'email', child: Text('Email')),
+                    DropdownMenuItem(value: 'text', child: Text('Text')),
+                  ],
+                  onChanged: (val) => setStateDialog(() => invoicePref = val ?? 'email'),
+                ),
               ],
-              onChanged: (val) => invoicePref = val ?? 'email',
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () async {
-              final customer = Customer.basic(
-                customerId: existing?.customerId ?? '',
-                fullName: nameController.text.trim(),
-                email: emailController.text.trim(),
-                phone: phoneController.text.trim(),
-                invoicePreference: invoicePref,
-              );
-              if (existing == null) {
-                await _customerService.addCustomer(customer);
-              } else {
-                await _customerService.updateCustomer(customer);
-              }
-              Navigator.pop(ctx);
-              _loadCustomers();
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+              ElevatedButton(
+                onPressed: () async {
+                  final customer = Customer.basic(
+                    customerId: existing?.customerId ?? '',
+                    fullName: nameController.text.trim(),
+                    email: emailController.text.trim(),
+                    phone: phoneController.text.trim(),
+                    invoicePreference: invoicePref,
+                  );
+                  if (existing == null) {
+                    await _customerService.addCustomer(customer);
+                  } else {
+                    await _customerService.updateCustomer(customer);
+                  }
+                  Navigator.pop(ctx);
+                  _loadCustomers();
+                },
+                child: const Text('Save'),
+             ),
+        );
+      },
     );
   }
 

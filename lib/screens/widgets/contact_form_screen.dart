@@ -18,6 +18,7 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _firstNameCtrl, _lastNameCtrl, _businessNameCtrl, _emailCtrl, _phoneCtrl, _notesCtrl;
   bool _loading = false;
+  late FocusNode _emailFocus, _phoneFocus;
   String? _error;
 
   @override
@@ -30,6 +31,15 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
     _emailCtrl        = TextEditingController(text: c?.email);
     _phoneCtrl        = TextEditingController(text: c?.phone);
     _notesCtrl        = TextEditingController(text: c?.notes);
+    _emailFocus = FocusNode();
+    _phoneFocus = FocusNode();
+
+    _emailFocus.addListener(() {
+      if (!_emailFocus.hasFocus) _autoFill();
+    });
+    _phoneFocus.addListener(() {
+      if (!_phoneFocus.hasFocus) _autoFill();
+    });
 
     // NEW: support “confirm_save” intent to submit
     VoiceEventBus().on().listen((evt) {
@@ -47,6 +57,8 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
     _emailCtrl.dispose();
     _phoneCtrl.dispose();
     _notesCtrl.dispose();
+    _emailFocus.dispose();
+    _phoneFocus.dispose();
     super.dispose();
   }
 
@@ -75,6 +87,28 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
     } finally {
       setState(() => _loading = false);
     }
+  }
+  
+    Future<void> _autoFill() async {
+    final email = _emailCtrl.text.trim();
+    final phone = _phoneCtrl.text.trim();
+    if (email.isEmpty && phone.isEmpty) return;
+    try {
+      final result = await ContactService.autoFill(
+        email: email.isNotEmpty ? email : null,
+        phone: phone.isNotEmpty ? phone : null,
+      );
+      if (result != null) {
+        if (_firstNameCtrl.text.isEmpty) _firstNameCtrl.text = result.firstName;
+        if (_lastNameCtrl.text.isEmpty) _lastNameCtrl.text = result.lastName;
+        if (_businessNameCtrl.text.isEmpty && result.businessName != null) {
+          _businessNameCtrl.text = result.businessName!;
+        }
+        if (_notesCtrl.text.isEmpty && result.notes != null) {
+          _notesCtrl.text = result.notes!;
+        }
+      }
+    } catch (_) {}
   }
 
   @override
@@ -111,6 +145,7 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _emailCtrl,
+                      focusNode: _emailFocus,
                       decoration: const InputDecoration(labelText: 'Email (optional)'),
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
@@ -121,6 +156,7 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _phoneCtrl,
+                      focusNode: _phoneFocus,
                       decoration: const InputDecoration(labelText: 'Phone (optional)'),
                       keyboardType: TextInputType.phone,
                     ),

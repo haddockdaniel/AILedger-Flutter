@@ -51,6 +51,21 @@ class CustomerService {
     }
     return DatabaseService().getCustomer(id);
   }
+  
+    /// Autofill a customer using email or phone via the backend API
+  static Future<Customer?> autoFill({String? email, String? phone}) async {
+    final uri = Uri.parse('$_baseUrl/autofill').replace(queryParameters: {
+      if (email != null && email.isNotEmpty) 'email': email,
+      if (phone != null && phone.isNotEmpty) 'phone': phone,
+    });
+    try {
+      final res = await http.get(uri, headers: await _headers());
+      if (res.statusCode == 200) {
+        return Customer.fromJson(json.decode(res.body));
+      }
+    } catch (_) {}
+    return null;
+  }
 
   static Future<void> addCustomer(Customer customer) async {
       if (await ConnectivityService.isOnline()) {

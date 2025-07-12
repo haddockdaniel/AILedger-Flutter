@@ -102,4 +102,21 @@ class ContactService {
       throw Exception('Failed to parse business card (${streamed.statusCode})');
     }
   }
+  
+    /// Autofill a contact using email or phone via the backend API
+  static Future<Contact?> autoFill({String? email, String? phone}) async {
+    final headers = await _getHeaders();
+    final uri = Uri.parse('$apiBaseUrl/api/contacts/autofill').replace(
+      queryParameters: {
+        if (email != null && email.isNotEmpty) 'email': email,
+        if (phone != null && phone.isNotEmpty) 'phone': phone,
+      },
+    );
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      return Contact.fromJson(jsonDecode(response.body));
+    }
+    return null;
+  }
+  
 }
